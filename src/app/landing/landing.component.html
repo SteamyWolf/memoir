@@ -1,0 +1,32 @@
+<nav class="navbar">
+    <div class="navbar-brand">
+        <div class="navbar-item link" (click)="navigateToHome()">
+            <img src="../../assets/logo.png" style="max-height: 70px;">
+            <h1 style="font-size: 24px;">memoir</h1>
+        </div>
+        <div class="navbar-burger" (click)="burgerClick()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+    <div class="navbar-menu" [ngClass]="{'is-active': burgerActive}">
+        <div class="navbar-end">
+            <div class="navbar-item mr-4">
+                <span class="login-text" style="font-size: 19px;" (click)="loginNavigate()">Log in</span>
+            </div>
+        </div>
+    </div>
+</nav>
+<section class="section">
+    <div class="container">
+        <div class="columns">
+            <div class="column">
+                <h1 class="is-size-1 title"></h1>
+            </div>
+            <div class="column">
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus, molestias? Impedit consequuntur minus quam numquam deleniti eligendi commodi consequatur quos sequi! Distinctio, cum id dignissimos exercitationem reiciendis vel quos animi.</p>
+            </div>
+        </div>
+    </div>
+</section>
