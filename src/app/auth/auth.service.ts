@@ -10,7 +10,9 @@ import firebase from 'firebase/compat/app';
 @Injectable({providedIn: 'root'})
 export class AuthService {
     currentUser: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+    appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     authChange: Subject<boolean> = new Subject<boolean>();
+    authError: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private isAuthenticated: boolean = false;
     constructor(private afAuth: AngularFireAuth, private router: Router, private afStore: AngularFirestore) {}
 
@@ -31,6 +33,8 @@ export class AuthService {
             })
             .catch(err => {
                 console.log(err)
+                this.appLoading.next(false);
+                this.authError.next(true);
             })
     }
 
@@ -51,10 +55,13 @@ export class AuthService {
             })
             .catch(err => {
                 console.log(err);
+                this.appLoading.next(false);
+                this.authError.next(true);
             })
     }
 
     authenticationSuccessful() {
+        this.appLoading.next(false);
         this.router.navigate(['/stories']);
         this.isAuthenticated = true;
         this.authChange.next(true);
@@ -67,20 +74,50 @@ export class AuthService {
     }
 
     async googleSignIn() {
-        const credential = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-        const data: User = {
-            uId: credential.user?.uid,
-            email: credential.user?.email,
-            photoUrl: credential.user?.photoURL,
-            displayName: credential.user?.displayName
+        try {
+            const credential = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+            const data: User = {
+                uId: credential.user?.uid,
+                email: credential.user?.email,
+                photoUrl: credential.user?.photoURL,
+                displayName: credential.user?.displayName
+            }
+            return this.updateUserData(data).then(() => {
+                this.authenticationSuccessful();
+                this.currentUser.next(data);
+            })
+            .catch(err => {
+                console.log(err)
+                this.appLoading.next(false);
+                this.authError.next(true);
+            })
+        } catch (error) {
+            this.appLoading.next(false);
+            this.authError.next(true);
+        } 
+    }
+
+    async facebookSignIn() {
+        try {
+            const credential = await this.afAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
+            const data: User = {
+                uId: credential.user?.uid,
+                email: credential.user?.email,
+                photoUrl: credential.user?.photoURL,
+                displayName: credential.user?.displayName
+            }
+            return this.updateUserData(data).then(() => {
+                this.authenticationSuccessful();
+                this.currentUser.next(data);
+            }).catch(err => {
+                console.log(err);
+                this.appLoading.next(false);
+                this.authError.next(true);
+            })
+        } catch (error) {
+            this.appLoading.next(false);
+            this.authError.next(true);
         }
-        return this.updateUserData(data).then(() => {
-            this.authenticationSuccessful();
-            this.currentUser.next(data);
-        })
-        .catch(err => {
-            console.log(err)
-        })
     }
 
     private updateUserData(data: User) {
