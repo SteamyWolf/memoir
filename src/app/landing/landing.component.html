@@ -1,31 +1,15 @@
-<nav class="navbar">
-    <div class="navbar-brand">
-        <div class="navbar-item link" (click)="navigateToHome()">
-            <img src="../../assets/logo.png" style="max-height: 70px;">
-            <h1 style="font-size: 24px;">memoir</h1>
-        </div>
-        <div class="navbar-burger" (click)="burgerClick()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-    </div>
-    <div class="navbar-menu" [ngClass]="{'is-active': burgerActive}">
-        <div class="navbar-end">
-            <div class="navbar-item mr-4">
-                <span class="login-text" style="font-size: 19px;" (click)="loginNavigate()">Log in</span>
-            </div>
-        </div>
-    </div>
-</nav>
+<app-nav></app-nav>
 <section class="section">
     <div class="container">
-        <div class="columns">
+        <div class="columns is-vcentered is-centered">
             <div class="column">
-                <h1 class="is-size-1 title"></h1>
+                <h1 class="is-size-2-tablet title">Create a Memoir of Your Loved Ones</h1>
+                <h2 class="is-size-5-tablet subtitle">Easy to use templates make sharing stories simple.<br>Stories that last forever...</h2>
             </div>
             <div class="column">
-                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ducimus, molestias? Impedit consequuntur minus quam numquam deleniti eligendi commodi consequatur quos sequi! Distinctio, cum id dignissimos exercitationem reiciendis vel quos animi.</p>
+                <figure class="image">
+                    <img src="../../assets/QR_fake.jpeg" alt="QR Code">
+                </figure>
             </div>
         </div>
     </div>

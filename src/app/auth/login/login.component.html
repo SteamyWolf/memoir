@@ -1,0 +1,30 @@
+<app-nav></app-nav>
+<div class="container">
+    <form class="box" [formGroup]="form">
+        <div class="is-flex is-justify-content-space-between is-align-items-center mb-4">
+            <h1 class="title mb-0">{{onSignInPage ? 'Sign In' : 'Create an Account'}}</h1>
+            <a class="link" (click)="changeSignIn()">{{onSignInPage ? "I don't have an account" : "Already have an account?"}}</a>
+        </div>
+        <div class="field">
+            <label class="label">Email</label>
+            <div class="control">
+                <input class="input" type="email" placeholder="e.g. alex@example.com" formControlName="email">
+            </div>
+        </div>
+        <div class="field">
+            <label class="label">Password</label>
+            <div class="control">
+                <input class="input" type="password" formControlName="password">
+            </div>
+        </div>
+        <button class="button is-info" type="button" (click)="chooseAuthMethod()" [disabled]="form.invalid">{{onSignInPage ? 'Sign in' : 'Create Account'}}</button>
+        <div class="has-text-right">
+            <a class="link">Having trouble signing in?</a>
+        </div>
+        <div class="buttons is-flex is-flex-direction-column">
+            <button class="button is-primary block" (click)="googleLogin()">Sign in with Google</button>
+            <button class="button is-primary block">Sign in with Facebook</button>
+            <button class="button is-primary block">Sign in with Apple</button>
+        </div>
+    </form>
+</div>
