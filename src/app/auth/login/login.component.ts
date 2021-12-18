@@ -78,5 +78,3 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.authService.facebookSignIn();
     }
 }
-
-//make notificartions for when the password is invalid etc,.

@@ -1,38 +1,51 @@
 <app-nav></app-nav>
-<div class="container" *ngIf="!loading">
-    <form class="box" [formGroup]="form">
-        <div class="is-flex is-justify-content-space-between is-align-items-center mb-4">
-            <h1 class="title mb-0">{{onSignInPage ? 'Sign In' : 'Create an Account'}}</h1>
-            <a class="link" (click)="changeSignIn()">{{onSignInPage ? "I don't have an account" : "Already have an account?"}}</a>
+<div class="columns is-centered">
+    <div class="column is-half">
+        <div class="container" *ngIf="!loading">
+            <form class="box" [formGroup]="form">
+                <div class="is-flex is-justify-content-space-between is-align-items-center mb-4">
+                    <h1 class="title mb-0">{{onSignInPage ? 'Sign In' : 'Create an Account'}}</h1>
+                    <a class="link" (click)="changeSignIn()">{{onSignInPage ? "I don't have an account" : "Already have an account?"}}</a>
+                </div>
+                <div class="notification is-danger is-light" *ngIf="authError">
+                    <button class="delete" (click)="authDeleteIcon()"></button>
+                    Primar lorem ipsum dolor sit amet, consectetur
+                    adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur.
+                  </div>
+                <div class="field">
+                    <label class="label">Email</label>
+                    <div class="control">
+                        <input class="input" [ngClass]="{'is-danger': form.controls.email.invalid && form.controls.email.touched}" type="email" placeholder="e.g. alex@example.com" formControlName="email">
+                        <p class="help is-danger" *ngIf="form.controls.email.invalid && form.controls.email.touched">Email is invalid</p>
+                        <p class="help is-danger" *ngIf="form.controls.email.value === '' && form.controls.email.touched">An email must be present</p>
+                    </div>
+                </div>
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control">
+                        <input class="input" [ngClass]="{'is-danger': form.controls.password.hasError('minlength')}" type="password" formControlName="password">
+                        <p class="help is-danger" *ngIf="form.controls.password.hasError('minlength') && form.controls.password.touched">Password must be at least 8 characters</p>
+                    </div>
+                </div>
+                <button class="button is-info" type="button" (click)="chooseAuthMethod()" [disabled]="form.invalid || form.controls.email.value === '' || form.controls.password.value === ''">{{onSignInPage ? 'Sign in' : 'Create Account'}}</button>
+                <div class="has-text-right">
+                    <a class="link">Having trouble signing in?</a>
+                </div>
+                <div class="buttons is-flex is-flex-direction-column">
+                    <button type="button" class="button is-primary block" (click)="googleLogin()">Sign in with Google</button>
+                    <button type="button" class="button is-primary block" (click)="facebookLogin()">Sign in with Facebook</button>
+                </div>
+            </form>
         </div>
-        <div class="notification is-danger is-light" *ngIf="authError">
-            <button class="delete" (click)="authDeleteIcon()"></button>
-            Primar lorem ipsum dolor sit amet, consectetur
-            adipiscing elit lorem ipsum dolor. <strong>Pellentesque risus mi</strong>, tempus quis placerat ut, porta nec nulla. Vestibulum rhoncus ac ex sit amet fringilla. Nullam gravida purus diam, et dictum <a>felis venenatis</a> efficitur.
-          </div>
-        <div class="field">
-            <label class="label">Email</label>
-            <div class="control">
-                <input class="input" [ngClass]="{'is-danger': form.controls.email.invalid && form.controls.email.touched}" type="email" placeholder="e.g. alex@example.com" formControlName="email">
-                <i class="has-text-danger" *ngIf="form.controls.email.invalid && form.controls.email.touched">Email is invalid</i>
-                <i class="has-text-danger" *ngIf="form.controls.email.value === '' && form.controls.email.touched">An email must be present</i>
-            </div>
-        </div>
-        <div class="field">
-            <label class="label">Password</label>
-            <div class="control">
-                <input class="input" [ngClass]="{'is-danger': form.controls.password.hasError('minlength')}" type="password" formControlName="password">
-                <i class="has-text-danger" *ngIf="form.controls.password.hasError('minlength') && form.controls.password.touched">Password must be at least 8 characters</i>
-            </div>
-        </div>
-        <button class="button is-info" type="button" (click)="chooseAuthMethod()" [disabled]="form.invalid || form.controls.email.value === '' || form.controls.password.value === ''">{{onSignInPage ? 'Sign in' : 'Create Account'}}</button>
-        <div class="has-text-right">
-            <a class="link">Having trouble signing in?</a>
-        </div>
-        <div class="buttons is-flex is-flex-direction-column">
-            <button class="button is-primary block" (click)="googleLogin()">Sign in with Google</button>
-            <button class="button is-primary block" (click)="facebookLogin()">Sign in with Facebook</button>
-        </div>
-    </form>
+    </div>
 </div>
-<progress *ngIf="loading" class="progress is-medium is-primary" max="100">45%</progress>
+<!-- <div class="progress-div" *ngIf="loading">
+    <progress class="progress is-medium is-primary" max="100">45%</progress>
+</div> -->
+
+<div class="modal" [ngClass]="{'is-active' : loading}">
+    <div class="modal-background"></div>
+    <div class="modal-content progress-div">
+        <progress class="progress is-medium is-primary" max="100">45%</progress>
+    </div>
+  </div>

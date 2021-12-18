@@ -1,0 +1,41 @@
+<div class="columns is-centered pt-5">
+    <div class="column is-3 has-text-centered">
+        <figure class="image is-inline-block">
+            <img class="is-rounded mobile-img" [src]="userPhoto">
+        </figure>
+        <h2 class="title mb-2">{{ user?.displayName }}</h2>
+        <h4 style="overflow-wrap: break-word;">{{ user?.email }}</h4>
+    </div>
+    <div class="column">
+        <form class="form">
+            <div class="field" *ngIf="!user?.provider">
+                <label class="label">Name</label>
+                <div class="control">
+                  <input class="input" type="text" placeholder="Text input">
+                </div>
+              </div>
+              
+              <div class="field" *ngIf="!user?.provider">
+                <label class="label">Email</label>
+                <div class="control has-icons-left has-icons-right">
+                  <input class="input is-danger" type="email" placeholder="Email input" value="hello@">
+                </div>
+                <p class="help is-danger">This email is invalid</p>
+              </div>
+              
+              <div *ngIf="user?.provider">
+                <p>To change your name, email, or profile image, you'll have do it through your provider.</p>
+                <p>Looks like you signed in with <b>{{ user?.provider }}</b>.</p>
+              </div>
+              
+              <div class="field is-grouped" *ngIf="!user?.provider">
+                <div class="control">
+                  <button class="button is-link">Submit</button>
+                </div>
+                <div class="control">
+                  <button class="button is-link is-light">Cancel</button>
+                </div>
+              </div>
+        </form>
+    </div>
+</div>

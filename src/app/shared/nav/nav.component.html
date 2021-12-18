@@ -4,7 +4,7 @@
             <img src="../../assets/logo.png" style="max-height: 70px;" alt="logo">
             <h1 style="font-size: 24px;">memoir</h1>
         </div>
-        <div class="navbar-burger" (click)="burgerToggle()">
+        <div class="navbar-burger" *ngIf="currentPage !== 'login'" style="height: 86px;" (click)="burgerToggle()">
             <span></span>
             <span></span>
             <span></span>
@@ -17,11 +17,27 @@
                 <span class="login-text" style="font-size: 19px;" *ngIf="userAuthenticated" (click)="logoutNavigate()">Log out</span>
             </div>
         </div>
-        <div class="navbar-end" *ngIf="currentPage !== 'landing' && currentPage !== 'login'">
+        <div class="navbar-end" *ngIf="currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'profile'">
             <div class="navbar-item mr-4">
                 <figure class="image is-48x48" style="cursor: pointer;">
                     <img class="is-rounded" style="max-height: none;" [src]="userPhoto" *ngIf="userAuthenticated" (click)="profileNavigate()">
                 </figure>
+            </div>
+        </div>
+        <div class="navbar-end" *ngIf="currentPage === 'profile'">
+            <div class="navbar-item mr-4">
+                <span class="is-active">Stories</span>
+            </div>
+        </div>
+        <div class="navbar-end mobile-nav" *ngIf="currentPage === 'profile'">
+            <div class="navbar-item">
+                <span class="is-active" (click)="triggerProfileMethod('settings')">Settings</span>
+            </div>
+            <div class="navbar-item">
+                <span class="is-active" (click)="triggerProfileMethod('subscription')">Subscription</span>
+            </div>
+            <div class="navbar-item">
+                <span class="is-active" (click)="triggerProfileMethod('logout')">Logout</span>
             </div>
         </div>
     </div>

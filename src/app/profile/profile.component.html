@@ -1,1 +1,43 @@
-<p>profile works!</p>
+<app-nav></app-nav>
+<!-- <div class="container"> -->
+    <div class="is-flex">
+        <!-- <div class="column is-2"> -->
+            <aside class="menu mt-2 ml-3 mobile-nav" style="width: 14%;">
+                <p class="menu-label">
+                    General
+                </p>
+                <ul class="menu-list">
+                    <li><a [ngClass]="{ 'is-active' : currentRoute === '/profile/settings' }" (click)="settingsNavigate()">Settings</a></li>
+                </ul>
+                <p class="menu-label">
+                    Financial
+                </p>
+                <ul class="menu-list">
+                    <li><a [ngClass]="{ 'is-active' : currentRoute === '/profile/subscription' } " (click)="subscriptionNavigate()">Subscription</a></li>
+                </ul>
+                <p class="menu-label">
+                    Account
+                </p>
+                <ul class="menu-list">
+                    <li><a (click)="openLogoutModal()">Logout</a></li>
+                </ul>
+            </aside>
+        <!-- </div> -->
+        <div class="container p-3">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+<!-- </div> -->
+<div class="modal" [ngClass]="{ 'is-active' : modalOpen }">
+    <div class="modal-background" (click)="closeLogoutModal()"></div>
+    <div class="modal-content has-background-white" style="padding: 30px 50px; border-radius: 10px;">
+      <h1 class="title">Are you sure you want to Logout?</h1>
+      <h2 class="subtitle">This will take you back to the login page.</h2>
+      <div class="is-flex is-justify-content-space-between">
+        <button class="button is-danger" (click)="closeLogoutModal()">No</button>
+        <button class="button is-primary" (click)="logout()">Logout</button>
+      </div>
+      
+    </div>
+    <button class="modal-close is-large" (click)="closeLogoutModal()" aria-label="close"></button>
+  </div>

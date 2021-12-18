@@ -5,6 +5,8 @@ import { LoginComponent } from './auth/login/login.component';
 import { StoriesComponent } from './stories/stories.component';
 import { AuthGuard } from './auth/auth.guard';
 import { ProfileComponent } from './profile/profile.component';
+import { SettingsComponent } from './profile/settings/settings.component';
+import { SubscriptionComponent } from './profile/subscription/subscription.component';
 
 const routes: Routes = [
     {
@@ -23,7 +25,23 @@ const routes: Routes = [
     },
     {
         path: 'profile',
-        component: ProfileComponent
+        component: ProfileComponent,
+        canActivate: [AuthGuard],
+        children: [
+            {
+                path: 'settings',
+                component: SettingsComponent
+            },
+            {
+                path: 'subscription',
+                component: SubscriptionComponent
+            },
+            {
+                path: '',
+                redirectTo: 'settings',
+                pathMatch: 'full'
+            }
+        ]
     },
     {
         path: '',
@@ -37,4 +55,4 @@ const routes: Routes = [
   exports: [RouterModule],
   providers: [AuthGuard]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

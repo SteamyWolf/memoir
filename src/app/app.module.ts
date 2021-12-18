@@ -17,6 +17,9 @@ import { CommonModule } from '@angular/common';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { AngularFireStorageModule } from '@angular/fire/compat/storage';
 import { ProfileComponent } from './profile/profile.component';
+import { HttpClientModule } from '@angular/common/http';
+import { SettingsComponent } from './profile/settings/settings.component';
+import { SubscriptionComponent } from './profile/subscription/subscription.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +28,9 @@ import { ProfileComponent } from './profile/profile.component';
     LoginComponent,
     NavComponent,
     StoriesComponent,
-    ProfileComponent
+    ProfileComponent,
+    SettingsComponent,
+    SubscriptionComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +42,8 @@ import { ProfileComponent } from './profile/profile.component';
     AngularFireStorageModule,
     FormsModule,
     ReactiveFormsModule,
-    CommonModule
+    CommonModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -9,3 +9,15 @@
 .link:hover {
     color: black;
 }
+
+
+.mobile-nav {
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .mobile-nav {
+        display: block;
+        
+    }
+}

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { User } from 'src/app/auth/user.model';
+import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
     selector: 'app-nav',
@@ -15,12 +15,12 @@ export class NavComponent implements OnInit, OnDestroy {
     userAuthenticated: boolean;
     subscription: Subscription;
     userPhoto: string;
-    constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService) { }
+    constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private profileScv: ProfileService) { }
 
     ngOnInit(): void {
-        console.log(this.route.snapshot.routeConfig?.path, this.userAuthenticated)
         this.userAuthenticated = this.authService.isAuth();
         this.checkPageRoute();
+        console.log(this.currentPage)
 
         this.subscription = this.authService.authChange.subscribe((authenticated: boolean) => {
             console.log(authenticated)
@@ -37,7 +37,7 @@ export class NavComponent implements OnInit, OnDestroy {
                     this.userPhoto = '../../../assets/no_profile.png';
                 }
             })
-        )
+        );
     }
 
     ngOnDestroy() {
@@ -70,5 +70,9 @@ export class NavComponent implements OnInit, OnDestroy {
 
     burgerToggle() {
         this.burgerActive = !this.burgerActive;
+    }
+
+    triggerProfileMethod(key: string) {
+        this.profileScv.emitData(key);
     }
 }
