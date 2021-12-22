@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AngularFireAuth } from "@angular/fire/compat/auth";
-import { NavigationEnd, NavigationStart, Router } from "@angular/router";
+import { NavigationEnd, Router } from "@angular/router";
 import { BehaviorSubject, Subject } from "rxjs";
 import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";

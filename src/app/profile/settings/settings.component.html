@@ -23,8 +23,8 @@
                 <p class="help is-danger">This email is invalid</p>
               </div>
 
-              <input type="file" style="display: none;" #uploadProfilePic>
-              <button class="button is-primary" (click)="uploadImage()">Upload Profile Picture</button>
+              <input type="file" style="display: none;" (change)="uploadImage($event)" #uploadProfilePic>
+              <button class="button is-primary" (click)="uploadProfilePic.click()">Upload Profile Picture</button>
 
               <div *ngIf="user?.provider">
                 <p>To change your name, email, or profile image, you'll have do it through your provider.</p>
