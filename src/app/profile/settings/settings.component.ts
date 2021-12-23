@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
 
@@ -12,6 +13,7 @@ import { User } from 'src/app/auth/user.model';
 export class SettingsComponent implements OnInit {
     user: User | null;
     userPhoto: string;
+    form: FormGroup;
     @ViewChild('uploadProfilePic') uploadProfilePic: HTMLInputElement;
     constructor(private authService: AuthService, private afStorage: AngularFireStorage, private afStore: AngularFirestore) { }
 
@@ -24,11 +26,15 @@ export class SettingsComponent implements OnInit {
             } else {
                 this.userPhoto = '../../../assets/no_profile.png';
             }
+        });
+
+        this.form = new FormGroup({
+            'displayName': new FormControl(this.user?.displayName ? this.user.displayName : '', [Validators.maxLength(100)]),
+            'email': new FormControl(this.user?.email ? this.user.email : '', [Validators.email, Validators.maxLength(100)])
         })
     }
 
     uploadImage(event: any) {
-        console.log(event);
         if (event) {
             const file: File = event.target.files[0];
             const filePath = `${this.user?.uId}-profilePic`;
@@ -51,12 +57,13 @@ export class SettingsComponent implements OnInit {
                 
             })
             .catch(err => {
-
+                console.error(err);
             })
             
         }
-        // const filePath = 'filesW';
-        // const ref = this.afStorage.ref(filePath);
-        // const task = ref.put(file);
+    }
+
+    saveForm() {
+        console.log(this.form);
     }
 }

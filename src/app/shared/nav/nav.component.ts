@@ -1,7 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
+import { User } from 'src/app/auth/user.model';
 import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
@@ -20,13 +22,10 @@ export class NavComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         this.userAuthenticated = this.authService.isAuth();
         this.checkPageRoute();
-        console.log(this.currentPage)
 
         this.subscription = this.authService.authChange.subscribe((authenticated: boolean) => {
-            console.log(authenticated)
             this.userAuthenticated = authenticated;
             this.checkPageRoute();
-            console.log(this.currentPage, this.userAuthenticated)
         })
 
         this.subscription.add(
@@ -49,7 +48,6 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     loginNavigate() {
-        console.log('login');
         this.router.navigate(['/login']);
     }
 
@@ -58,13 +56,11 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     navigateToHome() {
-        console.log('go to landing')
         this.router.navigate(['/landing']);
         console.log(this.userAuthenticated)
     }
 
     profileNavigate() {
-        console.log('profile')
         this.router.navigate(['/profile']);
     }
 
@@ -74,5 +70,9 @@ export class NavComponent implements OnInit, OnDestroy {
 
     triggerProfileMethod(key: string) {
         this.profileScv.emitData(key);
+    }
+
+    storiesNavigate() {
+        this.router.navigate(['/stories']);
     }
 }
