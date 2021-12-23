@@ -6,6 +6,7 @@ import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";
 import { AngularFirestore, AngularFirestoreDocument } from "@angular/fire/compat/firestore";
 import firebase from 'firebase/compat/app';
+import { AngularFireStorage } from "@angular/fire/compat/storage";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
@@ -15,7 +16,7 @@ export class AuthService {
     authChange: Subject<boolean> = new Subject<boolean>();
     authError: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     private isAuthenticated: boolean = false;
-    constructor(private afAuth: AngularFireAuth, private router: Router, private afStore: AngularFirestore) {
+    constructor(private afAuth: AngularFireAuth, private router: Router, private afStore: AngularFirestore, private afStorage: AngularFireStorage) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
                 console.log(event)
@@ -51,19 +52,25 @@ export class AuthService {
         this.afAuth.signInWithEmailAndPassword(authData.email, authData.password)
             .then(result => {
                 console.log(result);
-                this.authenticationSuccessful();
                 this.afStore.doc<User>(`users/${result.user?.uid}`).get().subscribe(doc => {
-                    const user: User = {
-                        uId: doc.get('uId'),
-                        email: doc.get('email'),
-                        photoUrl: doc.get('photoUrl'),
-                        displayName: doc.get('displayName')
-                    }
-                    this.currentUser.next(user)
+                    this.afStorage.ref(doc.get('photoUrl')).getDownloadURL().subscribe((url: string) => {
+                        const user: User = {
+                            uId: doc.get('uId'),
+                            email: doc.get('email'),
+                            photoUrl: url,
+                            displayName: doc.get('displayName')
+                        }
+                        this.currentUser.next(user);
+                        this.authenticationSuccessful();
+                    }, err => {
+                        console.error(err)
+                        this.appLoading.next(false);
+                        this.authError.next(true);
+                    }) 
                 })
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
                 this.appLoading.next(false);
                 this.authError.next(true);
             })

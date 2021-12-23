@@ -10,13 +10,13 @@ import { User } from 'src/app/auth/user.model';
   styleUrls: ['./settings.component.scss']
 })
 export class SettingsComponent implements OnInit {
-    user: User | null | undefined;
+    user: User | null;
     userPhoto: string;
     @ViewChild('uploadProfilePic') uploadProfilePic: HTMLInputElement;
     constructor(private authService: AuthService, private afStorage: AngularFireStorage, private afStore: AngularFirestore) { }
 
     ngOnInit(): void {
-        this.authService.currentUser.subscribe((user: User | null | undefined) => {
+        this.authService.currentUser.subscribe((user: User | null) => {
             this.user = user
             console.log(user)
             if (user?.photoUrl) {
@@ -30,12 +30,30 @@ export class SettingsComponent implements OnInit {
     uploadImage(event: any) {
         console.log(event);
         if (event) {
-            const file = event.target.files[0];
-            const filePath = 'name-your-file-path-here';
+            const file: File = event.target.files[0];
+            const filePath = `${this.user?.uId}-profilePic`;
             const task = this.afStorage.upload(filePath, file);
             task.percentageChanges().subscribe(percent => {
                 console.log(percent);
             })
+            task.then(taskSnapshot => {
+                console.log('%%%%%%%%', taskSnapshot);
+                if (this.user?.photoUrl) {
+                    this.afStorage.refFromURL(this.user.photoUrl).delete();
+                }
+                this.afStore.doc(`users/${this.user?.uId}`).update({photoUrl: filePath}).then(success => {
+                    console.log('(((((', success);
+                    taskSnapshot.ref.getDownloadURL().then((url: string) => {
+                        this.user!.photoUrl = url;
+                        this.authService.currentUser.next(this.user);
+                    })
+                })
+                
+            })
+            .catch(err => {
+
+            })
+            
         }
         // const filePath = 'filesW';
         // const ref = this.afStorage.ref(filePath);
