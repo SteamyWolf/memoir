@@ -72,7 +72,7 @@ export class NavComponent implements OnInit, OnDestroy {
         this.profileScv.emitData(key);
     }
 
-    storiesNavigate() {
-        this.router.navigate(['/stories']);
+    dashboardNavigate() {
+        this.router.navigate(['/dashboard']);
     }
 }

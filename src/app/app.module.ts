@@ -11,7 +11,7 @@ import { environment } from '../environments/environment';
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './auth/login/login.component';
 import { NavComponent } from './shared/nav/nav.component';
-import { StoriesComponent } from './stories/stories.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
@@ -20,6 +20,9 @@ import { ProfileComponent } from './profile/profile.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SettingsComponent } from './profile/settings/settings.component';
 import { SubscriptionComponent } from './profile/subscription/subscription.component';
+import { TemplatesComponent } from './templates/templates.component';
+import { Template01Component } from './shared/all-templates/template01/template01.component';
+import { Template02Component } from './shared/all-templates/template02/template02.component';
 
 @NgModule({
   declarations: [
@@ -27,10 +30,13 @@ import { SubscriptionComponent } from './profile/subscription/subscription.compo
     LandingComponent,
     LoginComponent,
     NavComponent,
-    StoriesComponent,
+    DashboardComponent,
     ProfileComponent,
     SettingsComponent,
-    SubscriptionComponent
+    SubscriptionComponent,
+    TemplatesComponent,
+    Template01Component,
+    Template02Component
   ],
   imports: [
     BrowserModule,

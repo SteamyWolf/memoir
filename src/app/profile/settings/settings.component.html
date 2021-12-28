@@ -1,46 +1,56 @@
+<div class="notification is-success has-text-centered" *ngIf="displayNotification">
+    <button class="delete"></button>
+    <strong>Success!</strong>
+</div>
 <div class="columns is-centered pt-5">
     <div class="column is-3 has-text-centered">
         <figure class="image is-inline-block wrapper">
             <img class="is-rounded mobile-img rectangle-to-square" [src]="userPhoto">
         </figure>
         <h2 class="title mb-2">{{ user?.displayName }}</h2>
-        <h4 style="overflow-wrap: break-word;">{{ user?.email }}</h4>
+        <h4 class="mb-2" style="overflow-wrap: break-word;">{{ user?.email }}</h4>
+        <input type="file" style="display: none;" (change)="uploadImage($event)" #uploadProfilePic>
+        <button *ngIf="!user!.provider" class="button is-primary" (click)="uploadProfilePic.click()">{{ user!.photoUrl ? 'Upload New Profile Picture' : 'Upload Profile Picture'}}</button>
     </div>
     <div class="column">
         <form class="form" [formGroup]="form" (ngSubmit)="saveForm()">
             <div class="field" *ngIf="!user?.provider">
                 <label class="label">Name</label>
                 <div class="control">
-                  <input class="input" type="text" formControlName="displayName">
+                    <input class="input" [ngClass]="{'is-danger': form.controls.displayName.invalid}" type="text" formControlName="displayName">
                 </div>
                 <p class="help is-danger" *ngIf="form.controls.displayName.hasError('maxlength')">Name is too long</p>
-              </div>
-              
-              <div class="field" *ngIf="!user?.provider">
+            </div>
+
+            <div class="field" *ngIf="!user?.provider">
                 <label class="label">Email</label>
                 <div class="control">
-                  <input class="input" type="email" formControlName="email">
+                    <input class="input" [ngClass]="{'is-danger': form.controls.email.invalid}" type="email" formControlName="email">
                 </div>
-                <p class="help is-danger">Email is invalid</p>
-                <p class="help is-danger">Email address is too long</p>
-              </div>
+                <p class="help is-danger" *ngIf="form.controls.email.invalid">Email is invalid</p>
+                <p class="help is-danger" *ngIf="form.controls.email.hasError('maxlength')">Email address is too long
+                </p>
+            </div>
 
-              <input type="file" style="display: none;" (change)="uploadImage($event)" #uploadProfilePic>
-              <button class="button is-primary" (click)="uploadProfilePic.click()">Upload Profile Picture</button>
-
-              <div *ngIf="user?.provider">
+            <div *ngIf="user?.provider">
                 <p>To change your name, email, or profile image, you'll have do it through your provider.</p>
                 <p>Looks like you signed in with <b>{{ user?.provider }}</b>.</p>
-              </div>
-              
-              <div class="field is-grouped" *ngIf="!user?.provider">
+            </div>
+
+            <div class="field is-grouped" *ngIf="!user?.provider">
                 <div class="control">
-                  <button class="button is-link" type="submit">Submit</button>
+                    <button class="button is-link" type="submit" [disabled]="form.pristine || form.invalid">Save</button>
                 </div>
                 <div class="control">
-                  <button class="button is-link is-light">Cancel</button>
+                    <button class="button is-link is-light" type="button" (click)="cancel()" [disabled]="form.pristine">Cancel</button>
                 </div>
-              </div>
+            </div>
         </form>
+    </div>
+</div>
+<div class="modal" [ngClass]="{'is-active' : loading}">
+    <div class="modal-background"></div>
+    <div class="modal-content progress-div">
+        <progress class="progress is-medium is-primary" max="100">45%</progress>
     </div>
 </div>

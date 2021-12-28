@@ -93,7 +93,7 @@ export class AuthService {
 
     authenticationSuccessful() {
         this.appLoading.next(false);
-        this.router.navigate(['/stories']);
+        this.router.navigate(['/dashboard']);
         this.isAuthenticated = true;
         this.authChange.next(true);
     }

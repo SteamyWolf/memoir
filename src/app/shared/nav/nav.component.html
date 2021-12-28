@@ -2,7 +2,7 @@
     <div class="navbar-brand">
         <div class="navbar-item link" (click)="navigateToHome()">
             <img src="../../assets/logo.png" style="max-height: 70px;" alt="logo">
-            <h1 style="font-size: 24px;">memoir</h1>
+            <h1 style="font-size: 24px;">templatr</h1>
         </div>
         <div class="navbar-burger" *ngIf="currentPage !== 'login'" style="height: 86px;" (click)="burgerToggle()">
             <span></span>
@@ -18,6 +18,9 @@
             </div>
         </div>
         <div class="navbar-end" *ngIf="currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'profile'">
+            <div class="navbar-item mr-4" *ngIf="currentPage === 'templates'">
+                <span class="is-active cursor" (click)="dashboardNavigate()">Dashboard</span>
+            </div>
             <div class="navbar-item mr-4">
                 <figure class="image is-48x48" style="cursor: pointer;">
                     <img class="is-rounded rectangle-to-square" style="max-height: none;" [src]="userPhoto" *ngIf="userAuthenticated" (click)="profileNavigate()">
@@ -26,7 +29,7 @@
         </div>
         <div class="navbar-end" *ngIf="currentPage === 'profile'">
             <div class="navbar-item mr-4">
-                <span class="is-active cursor" (click)="storiesNavigate()">Stories</span>
+                <span class="is-active cursor" (click)="dashboardNavigate()">Dashboard</span>
             </div>
         </div>
         <div class="navbar-end mobile-nav" *ngIf="currentPage === 'profile'">
