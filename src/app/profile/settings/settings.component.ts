@@ -1,6 +1,6 @@
 import { Component, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore, DocumentSnapshot } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
@@ -19,16 +19,14 @@ export class SettingsComponent implements OnInit, OnDestroy {
     loading: boolean = false;
     displayNotification: boolean = false;
     form: FormGroup;
+    progressPercentage: number | undefined = 0;
+    uploading: boolean = false;
     subscriptions: Subscription[] = [];
     @ViewChild('uploadProfilePic') uploadProfilePic: HTMLInputElement;
     constructor(private authService: AuthService, private afStorage: AngularFireStorage, private afStore: AngularFirestore, private afAuth: AngularFireAuth) { }
 
-    // @HostListener allows us to also guard against browser refresh, close, etc.
     @HostListener('window:beforeunload')
     canDeactivate(): Observable<boolean> | boolean {
-        // insert logic to check if there are pending changes here;
-        // returning true will navigate without confirmation
-        // returning false will show a confirm dialog before navigating away
         if (this.form.dirty) {
             this.form.reset({displayName: this.resetUser?.displayName, email: this.resetUser?.email});
             this.authService.currentUser.next(this.resetUser);
@@ -42,7 +40,13 @@ export class SettingsComponent implements OnInit, OnDestroy {
             this.user = user;
             this.resetUser = {...user};
             if (user?.photoUrl) {
-                this.userPhoto = user.photoUrl;
+                if (user.provider) {
+                    this.userPhoto = user.photoUrl;
+                } else {
+                    this.afStorage.ref(user.photoUrl).getDownloadURL().subscribe(url => {
+                        this.userPhoto = url;
+                    })
+                }
             } else {
                 this.userPhoto = '../../../assets/no_profile.png';
             }
@@ -64,35 +68,44 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        
+        this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 
-    uploadImage(event: any) {
+    async uploadImage(event: any) {
         if (event) {
+            this.uploading = true;
+            if (this.user?.photoUrl) {
+                await this.afStorage.ref(this.user.photoUrl).delete().toPromise().catch(error => {
+                    console.error(error)
+                    this.uploading = false;
+                });
+            }
             const file: File = event.target.files[0];
             const filePath = `${this.user?.uId}-profilePic`;
             const task = this.afStorage.upload(filePath, file);
-            this.subscriptions.push(task.percentageChanges().subscribe(percent => {
+            this.subscriptions.push(task.percentageChanges().subscribe((percent: number | undefined) => {
                 console.log(percent);
-            }));
+                this.progressPercentage = percent;
+            }, error => this.uploading = false));
             task.then(taskSnapshot => {
-                console.log('%%%%%%%%', taskSnapshot);
-                if (this.user?.photoUrl) {
-                    this.afStorage.refFromURL(this.user.photoUrl).delete();
-                }
-                this.afStore.doc(`users/${this.user?.uId}`).update({photoUrl: filePath}).then(success => {
-                    console.log('(((((', success);
-                    taskSnapshot.ref.getDownloadURL().then((url: string) => {
-                        this.user!.photoUrl = url;
+                this.afStore.doc(`users/${this.user?.uId}`).update({photoUrl: filePath}).then(() => {
+                    console.log('(((((', 'success');
+                    this.afStore.doc(`users/${this.user?.uId}`).get().subscribe((document) => {
+                        console.log(document)
+                        this.user!.photoUrl = document.get('photoUrl');
                         this.authService.currentUser.next(this.user);
+                        this.uploading = false;
                     })
                 })
-                
+                .catch(error => {
+                    console.error(error);
+                    this.uploading = false;
+                })
             })
             .catch(err => {
                 console.error(err);
+                this.uploading = false;
             })
-            
         }
     }
 
