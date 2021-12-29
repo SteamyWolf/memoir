@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
-import { User } from 'src/app/auth/user.model';
 import { ProfileService } from 'src/app/profile/profile.service';
 
 @Component({
@@ -17,7 +16,7 @@ export class NavComponent implements OnInit, OnDestroy {
     userAuthenticated: boolean;
     subscription: Subscription;
     userPhoto: string;
-    constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private profileScv: ProfileService) { }
+    constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private profileScv: ProfileService, private afStorage: AngularFireStorage) { }
 
     ngOnInit(): void {
         this.userAuthenticated = this.authService.isAuth();
@@ -31,7 +30,13 @@ export class NavComponent implements OnInit, OnDestroy {
         this.subscription.add(
             this.authService.currentUser.subscribe((user) => {
                 if (user?.photoUrl) {
-                    this.userPhoto = user.photoUrl;
+                    if (user.provider) {
+                        this.userPhoto = user.photoUrl;
+                    } else {
+                        this.afStorage.ref(user.photoUrl).getDownloadURL().subscribe(url => {
+                            this.userPhoto = url;
+                        })
+                    }
                 } else {
                     this.userPhoto = '../../../assets/no_profile.png';
                 }

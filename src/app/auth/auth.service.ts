@@ -53,22 +53,6 @@ export class AuthService {
             .then(result => {
                 console.log(result);
                 this.afStore.doc<User>(`users/${result.user?.uid}`).get().subscribe(doc => {
-                    if (doc.get('photoUrl')) {
-                        this.afStorage.ref(doc.get('photoUrl')).getDownloadURL().subscribe((url: string) => {
-                            const user: User = {
-                                uId: doc.get('uId'),
-                                email: doc.get('email'),
-                                photoUrl: url,
-                                displayName: doc.get('displayName')
-                            }
-                            this.currentUser.next(user);
-                            this.authenticationSuccessful();
-                        }, err => {
-                            console.error(err)
-                            this.appLoading.next(false);
-                            this.authError.next(true);
-                        }) 
-                    } else {
                         const user: User = {
                             uId: doc.get('uId'),
                             email: doc.get('email'),
@@ -77,7 +61,7 @@ export class AuthService {
                         }
                         this.currentUser.next(user);
                         this.authenticationSuccessful();
-                    }
+                    // }
                 }, err => {
                     console.error(err);
                     this.appLoading.next(false);

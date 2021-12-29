@@ -10,7 +10,7 @@
         <h2 class="title mb-2">{{ user?.displayName }}</h2>
         <h4 class="mb-2" style="overflow-wrap: break-word;">{{ user?.email }}</h4>
         <input type="file" style="display: none;" (change)="uploadImage($event)" #uploadProfilePic>
-        <button *ngIf="!user!.provider" class="button is-primary" (click)="uploadProfilePic.click()">{{ user!.photoUrl ? 'Upload New Profile Picture' : 'Upload Profile Picture'}}</button>
+        <button *ngIf="!user!.provider && !uploading" class="button is-primary" (click)="uploadProfilePic.click()" [disabled]="uploading">{{ user!.photoUrl ? 'Upload New Profile Picture' : 'Upload Profile Picture'}}</button>
     </div>
     <div class="column">
         <form class="form" [formGroup]="form" (ngSubmit)="saveForm()">
@@ -52,5 +52,11 @@
     <div class="modal-background"></div>
     <div class="modal-content progress-div">
         <progress class="progress is-medium is-primary" max="100">45%</progress>
+    </div>
+</div>
+<div class="modal" [ngClass]="{'is-active' : uploading}">
+    <div class="modal-background"></div>
+    <div class="modal-content progress-div">
+        <progress class="progress is-medium is-primary" [value]="progressPercentage" max="100">45%</progress>
     </div>
 </div>
