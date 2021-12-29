@@ -97,24 +97,35 @@ export class SettingsComponent implements OnInit, OnDestroy {
     }
 
     saveForm() {
-        console.log(this.form);
         this.loading = true;
-        this.afAuth.updateCurrentUser
-        this.afStore.doc<User>(`users/${this.user?.uId}`).update({displayName: this.form.controls.displayName.value, email: this.form.controls.email.value})
-            .then(() => {
-                this.authService.currentUser.next(this.user);
-                this.loading = false;
-                this.form.markAsPristine();
-                this.displayNotification = true;
-                setTimeout(() => {
-                    this.displayNotification = false;
-                }, 3000)
-
-            })
-            .catch(error => {
-                console.error(error);
-                this.loading = false;
-            })
+        this.afAuth.currentUser.then(user => {
+            if (this.resetUser?.email !== this.form.controls.email.value) {
+                user?.updateEmail(this.form.controls.email.value).then(() => {
+                    this.afStore.doc<User>(`users/${this.user?.uId}`).update({displayName: this.form.controls.displayName.value, email: this.form.controls.email.value})
+                    .then(() => {
+                        this.authService.currentUser.next(this.user);
+                        this.loading = false;
+                        this.form.markAsPristine();
+                        this.displayNotification = true;
+                        setTimeout(() => {
+                            this.displayNotification = false;
+                        }, 3000)
+                    })
+                    .catch(error => {
+                        console.error(error, 'from the firestore');
+                        this.loading = false;
+                    })
+                })
+                .catch(error => {
+                    console.error(error);
+                })
+            }
+        })
+        .catch(error => {
+            console.error(error, 'from the firebase auth');
+            this.loading = false;
+        })
+        
     }
 
     cancel() {
