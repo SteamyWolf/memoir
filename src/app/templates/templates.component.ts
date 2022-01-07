@@ -15,7 +15,7 @@ export class TemplatesComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.subscriptions.push(this.authSvc.currentUser.subscribe(user => {
-            console.log(user);
+            // console.log(user);
         }))
     }
 

@@ -1,1 +1,34 @@
-<p>template01 works!</p>
+<app-nav></app-nav>
+<div class="container">
+    <div class="title-container has-text-centered my-6">
+        <h1 *ngIf="!canEditTitle" class="title" (click)="editTitle()">{{ title }}</h1>
+        <input *ngIf="canEditTitle" class="title" type="text" [(ngModel)]="title" (blur)="editTitle()" #titleInput>
+    </div>
+    <!-- <div class="content"> -->
+        <div class="columns">
+            <div class="column" *ngFor="let column of columns; let i = index">
+                <div class="is-flex is-justify-content-center mb-3">
+                    <img class="column-header-image" [src]="column.heroImage">
+                </div>
+                <div class="row is-flex is-justify-content-space-evenly my-3" *ngFor="let row of column.content; let last = last">
+                    <div class="left">
+                        <img class="column-image" [src]="row.image">
+                    </div>
+                    <div class="vl-container">
+                        <div class="vl" [ngClass]="{'last-row': last}"></div>
+                    </div>
+                    <div class="right">
+                        <textarea class="textarea" [value]="row.text" [(ngModel)]="row.text"></textarea>
+                    </div>
+                </div>
+                <div class="button-container has-text-centered mt-4">
+                    <button class="button is-primary" (click)="addRow(i)">Add Row</button>
+                </div>
+            </div>
+        </div>
+    <!-- </div> -->
+</div>
+<div class="add-new-column">
+    <button class="button is-primary mb-2" (click)="addColumn()">P</button>
+    <button class="button is-danger mt-2" *ngIf="columns.length > 1" (click)="deleteColumn()">D</button>
+</div>

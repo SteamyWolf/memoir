@@ -58,12 +58,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     signInNormal(data: AuthData) {
-        console.log('sign in')
         this.authService.signInUser(data);
     }
 
     signUpNormal(data: AuthData) {
-        console.log('sign up');
         this.authService.registerUser(data);
     }
 

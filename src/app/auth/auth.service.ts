@@ -10,7 +10,7 @@ import { AngularFireStorage } from "@angular/fire/compat/storage";
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-    currentUser: BehaviorSubject<User | null> = new BehaviorSubject<User | null>(null);
+    currentUser: BehaviorSubject<User | null | any> = new BehaviorSubject<User | null>(null);
     currentRoute: BehaviorSubject<NavigationEnd | null> = new BehaviorSubject<NavigationEnd | null>(null);
     appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     authChange: Subject<boolean> = new Subject<boolean>();
@@ -19,7 +19,6 @@ export class AuthService {
     constructor(private afAuth: AngularFireAuth, private router: Router, private afStore: AngularFirestore, private afStorage: AngularFireStorage) {
         this.router.events.subscribe(event => {
             if (event instanceof NavigationEnd) {
-                console.log(event)
                 this.currentRoute.next(event);
             }
         })
@@ -32,7 +31,6 @@ export class AuthService {
     registerUser(authData: AuthData) {
         this.afAuth.createUserWithEmailAndPassword(authData.email, authData.password)
             .then(result => {
-                console.log(result)
                 const data: User = {
                     uId: result.user?.uid,
                     email: authData.email,
@@ -42,7 +40,7 @@ export class AuthService {
                 this.afStore.doc(`users/${result.user?.uid}`).set(data);
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
                 this.appLoading.next(false);
                 this.authError.next(true);
             })
@@ -51,13 +49,13 @@ export class AuthService {
     signInUser(authData: AuthData) {
         this.afAuth.signInWithEmailAndPassword(authData.email, authData.password)
             .then(result => {
-                console.log(result);
                 this.afStore.doc<User>(`users/${result.user?.uid}`).get().subscribe(doc => {
                         const user: User = {
                             uId: doc.get('uId'),
                             email: doc.get('email'),
                             photoUrl: doc.get('photoUrl'),
-                            displayName: doc.get('displayName')
+                            displayName: doc.get('displayName'),
+                            data: doc.get('data')
                         }
                         this.currentUser.next(user);
                         this.authenticationSuccessful();
@@ -94,20 +92,21 @@ export class AuthService {
             const credential = await this.afAuth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
             let photoUrlArray = credential.user?.photoURL?.split('=');
             let photoUrl = photoUrlArray ? photoUrlArray[0] : null;
-            console.log(credential)
             const data: User = {
                 uId: credential.user?.uid,
                 email: credential.user?.email,
                 photoUrl: `${photoUrl}=s500-c`,
                 displayName: credential.user?.displayName,
-                provider: credential.credential?.signInMethod
+                provider: credential.credential?.signInMethod,
             }
             return this.updateUserData(data).then(() => {
-                this.authenticationSuccessful();
-                this.currentUser.next(data);
+                this.afStore.doc(`users/${data.uId}`).get().subscribe((user) => {
+                    this.authenticationSuccessful();
+                    this.currentUser.next(user.data());
+                })
             })
             .catch(err => {
-                console.log(err)
+                console.error(err)
                 this.appLoading.next(false);
                 this.authError.next(true);
             })
@@ -120,7 +119,6 @@ export class AuthService {
     async facebookSignIn() {
         try {
             const credential = await this.afAuth.signInWithPopup(new firebase.auth.FacebookAuthProvider());
-            console.log(credential)
             const data: User = {
                 uId: credential.user?.uid,
                 email: credential.user?.email,
@@ -129,10 +127,12 @@ export class AuthService {
                 provider: credential.credential?.signInMethod
             }
             return this.updateUserData(data).then(() => {
-                this.authenticationSuccessful();
-                this.currentUser.next(data);
+                this.afStore.doc(`users/${data.uId}`).get().subscribe((user) => {
+                    this.authenticationSuccessful();
+                    this.currentUser.next(user.data());
+                })
             }).catch(err => {
-                console.log(err);
+                console.error(err);
                 this.appLoading.next(false);
                 this.authError.next(true);
             })

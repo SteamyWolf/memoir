@@ -6,13 +6,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
+import { ComponentCanDeactivate } from 'src/app/shared/deactivate/deactivate.guard';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.scss']
 })
-export class SettingsComponent implements OnInit, OnDestroy {
+export class SettingsComponent implements OnInit, OnDestroy, ComponentCanDeactivate {
     user: User | null;
     resetUser: User | null;
     userPhoto: string;
@@ -33,7 +34,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
             return false;
         }
         return true;
-    }
+    } //TODO: this is technically not working as clicking cancel will reset their changes anyways. Solution is in template01
 
     ngOnInit(): void {
         this.subscriptions.push(this.authService.currentUser.subscribe((user: User | null) => {
@@ -84,14 +85,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
             const filePath = `${this.user?.uId}-profilePic`;
             const task = this.afStorage.upload(filePath, file);
             this.subscriptions.push(task.percentageChanges().subscribe((percent: number | undefined) => {
-                console.log(percent);
                 this.progressPercentage = percent;
             }, error => this.uploading = false));
             task.then(taskSnapshot => {
                 this.afStore.doc(`users/${this.user?.uId}`).update({photoUrl: filePath}).then(() => {
-                    console.log('(((((', 'success');
                     this.afStore.doc(`users/${this.user?.uId}`).get().subscribe((document) => {
-                        console.log(document)
                         this.user!.photoUrl = document.get('photoUrl');
                         this.authService.currentUser.next(this.user);
                         this.uploading = false;

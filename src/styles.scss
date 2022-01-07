@@ -21,3 +21,15 @@ body {
 .cursor {
     cursor: pointer;
 }
+
+.column-header-image {
+    width:  100%;
+    height: 300px;
+    object-fit: cover;
+}
+
+.column-image {
+    width: 200px;
+    height: 100px;
+    object-fit: cover;
+}

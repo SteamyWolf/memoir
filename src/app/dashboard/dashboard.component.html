@@ -6,39 +6,15 @@
             <h1 class="title">Your Saved Projects</h1>
             <button type="button" class="button is-primary" (click)="navigateToTemplates()">Create New Project</button>
         </div>
-        <div class="columns">
-            <div class="column">
+        <div class="columns" *ngIf="savedTemplates?.length">
+            <div class="column" *ngFor="let template of savedTemplates">
                 <figure class="image">
-                    <img src="../../assets/image-placeholder.jpeg">
-                </figure>
-            </div>
-            <div class="column">
-                <figure class="image">
-                    <img src="../../assets/image-placeholder.jpeg">
-                </figure>
-            </div>
-            <div class="column">
-                <figure class="image">
-                    <img src="../../assets/image-placeholder.jpeg">
+                    <img [src]="template.columns[0].heroImage" (click)="navigateToSavedTemplate(template)">
                 </figure>
             </div>
         </div>
-        <div class="columns">
-            <div class="column">
-                <figure class="image">
-                    <img src="../../assets/image-placeholder.jpeg">
-                </figure>
-            </div>
-            <div class="column">
-                <figure class="image">
-                    <img src="../../assets/image-placeholder.jpeg">
-                </figure>
-            </div>
-            <div class="column">
-                <figure class="image">
-                    <img src="../../assets/image-placeholder.jpeg">
-                </figure>
-            </div>
+        <div class="info" *ngIf="!savedTemplates?.length">
+            <h3 class="subtitle">You do not have any saved projects yet. Click on the Create New Project button to create a new project</h3>
         </div>
     </section>
 </div>

@@ -30,12 +30,14 @@ const routes: Routes = [
     {
         path: 'template01',
         component: Template01Component,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        canDeactivate: [DeactivateGuard]
     },
     {
         path: 'template02',
         component: Template02Component,
-        canActivate: [AuthGuard]
+        canActivate: [AuthGuard],
+        canDeactivate: [DeactivateGuard]
     },
     {
         path: 'login',

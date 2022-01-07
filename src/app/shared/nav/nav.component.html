@@ -17,7 +17,7 @@
                 <span class="login-text" style="font-size: 19px;" *ngIf="userAuthenticated" (click)="logoutNavigate()">Log out</span>
             </div>
         </div>
-        <div class="navbar-end" *ngIf="currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'profile'">
+        <div class="navbar-end" *ngIf="currentPage !== 'landing' && currentPage !== 'login' && currentPage !== 'profile' && currentPage !== 'template01'">
             <div class="navbar-item mr-4" *ngIf="currentPage === 'templates'">
                 <span class="is-active cursor" (click)="dashboardNavigate()">Dashboard</span>
             </div>
@@ -41,6 +41,14 @@
             </div>
             <div class="navbar-item">
                 <span class="is-active cursor" (click)="triggerProfileMethod('logout')">Logout</span>
+            </div>
+        </div>
+        <div class="navbar-end" *ngIf="currentPage === 'template01'">
+            <div class="navbar-item mr-4">
+                <span class="is-active cursor" (click)="dashboardNavigate()">Dashboard</span>
+            </div>
+            <div class="navbar-item mr-4">
+                <button class="button is-info" (click)="saveTemplate()">Save</button>
             </div>
         </div>
     </div>

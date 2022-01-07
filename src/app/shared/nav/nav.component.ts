@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 import { ProfileService } from 'src/app/profile/profile.service';
+import { TemplatesService } from '../all-templates/templates.service';
 
 @Component({
     selector: 'app-nav',
@@ -16,7 +17,14 @@ export class NavComponent implements OnInit, OnDestroy {
     userAuthenticated: boolean;
     subscription: Subscription;
     userPhoto: string;
-    constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private profileScv: ProfileService, private afStorage: AngularFireStorage) { }
+    constructor(
+        private router: Router, 
+        private route: ActivatedRoute, 
+        private authService: AuthService, 
+        private profileScv: ProfileService, 
+        private afStorage: AngularFireStorage,
+        private templatesSvc: TemplatesService
+        ) {}
 
     ngOnInit(): void {
         this.userAuthenticated = this.authService.isAuth();
@@ -62,7 +70,6 @@ export class NavComponent implements OnInit, OnDestroy {
 
     navigateToHome() {
         this.router.navigate(['/landing']);
-        console.log(this.userAuthenticated)
     }
 
     profileNavigate() {
@@ -79,5 +86,9 @@ export class NavComponent implements OnInit, OnDestroy {
 
     dashboardNavigate() {
         this.router.navigate(['/dashboard']);
+    }
+
+    saveTemplate() {
+        this.templatesSvc.saveTemplateToFirebase(this.currentPage!)
     }
 }
