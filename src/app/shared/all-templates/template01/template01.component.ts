@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
     styleUrls: ['./template01.component.scss']
 })
 export class Template01Component implements OnInit, ComponentCanDeactivate {
+    user: User;
     canEditTitle: boolean = false;
     title: string = 'Click to Change Title';
     columns: Column[] = [
@@ -58,7 +59,7 @@ export class Template01Component implements OnInit, ComponentCanDeactivate {
             return false;
         }
         return true;
-    }
+    } // still broken
 
     @HostListener('window:unload')
     unloadHandler() {
@@ -67,23 +68,29 @@ export class Template01Component implements OnInit, ComponentCanDeactivate {
 
     ngOnInit(): void {
         this.authService.currentUser.subscribe((user: User) => {
-            let template = user.data?.chosenTemplates.find(template => template.uuid === this.templatesSvc.currentTemplateUUID);
-            if (template !== undefined && template) {
-                // if user has a saved template with this template in their database
-                this.templatesSvc.currentTemplateUUID = template.uuid;
-                this.uuidCopy = template.uuid;
-                this.title = template!.title;
-                this.columns = template!.columns;
-                this.initializedColumnsCopy = [...template!.columns];
-                this.titleCopy = template!.title
-            } else {
-                // user has created a new project
-                this.templatesSvc.currentTemplateUUID = uuid();
-                this.addColumn();
-                this.initializedColumnsCopy = [...this.columns];
-                this.titleCopy = this.title;
-            }
+            this.user = user;
         })
+        this.loadNewOrSavedTemplate();
+    }
+
+    loadNewOrSavedTemplate() {
+        let template = this.user.data?.chosenTemplates.find(template => template.uuid === this.templatesSvc.currentTemplateUUID);
+        if (template) {
+            // if user has a saved template with this template in their database
+            this.templatesSvc.currentTemplateUUID = template.uuid;
+            this.uuidCopy = template.uuid;
+            this.title = template!.title;
+            this.columns = template!.columns;
+            this.initializedColumnsCopy = [...template!.columns];
+            this.titleCopy = template!.title
+        } else {
+            // user has created a new project
+            this.templatesSvc.currentTemplateUUID = uuid();
+            this.uuidCopy = this.templatesSvc.currentTemplateUUID;
+            this.addColumn();
+            this.initializedColumnsCopy = [...this.columns];
+            this.titleCopy = this.title;
+        }
     }
 
     editTitle() {

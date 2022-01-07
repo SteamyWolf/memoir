@@ -1,4 +1,4 @@
-<app-nav></app-nav>
+<app-nav [uuid]="uuidCopy" [title]="title" [columns]="columns" [type]="'template01'"></app-nav>
 <div class="container">
     <div class="title-container has-text-centered my-6">
         <h1 *ngIf="!canEditTitle" class="title" (click)="editTitle()">{{ title }}</h1>

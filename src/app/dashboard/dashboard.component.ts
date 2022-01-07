@@ -15,7 +15,9 @@ export class DashboardComponent implements OnInit {
 
     ngOnInit(): void {
         this.authService.currentUser.subscribe((user: User) => {
-            this.savedTemplates = user.data?.chosenTemplates;
+            if (user) {
+                this.savedTemplates = user.data?.chosenTemplates;
+            }
         })
     }
 
