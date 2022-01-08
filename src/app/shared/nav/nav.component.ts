@@ -97,6 +97,16 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     saveTemplate() {
+        if (!this.user.data?.chosenTemplates) {
+            console.log(this.user)
+            this.user.data = {chosenTemplates: []}
+        }
+        if (!this.user.photoUrl) {
+            delete this.user.photoUrl;
+        }
+        if (!this.user.displayName) {
+            delete this.user.displayName;
+        }
         let template = this.user.data!.chosenTemplates.find((template) => template.uuid === this.uuid);
         let index = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.uuid);
         const columns = JSON.parse(JSON.stringify(this.columns));

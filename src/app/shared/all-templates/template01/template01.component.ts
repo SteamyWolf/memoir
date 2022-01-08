@@ -16,30 +16,7 @@ export class Template01Component implements OnInit, ComponentCanDeactivate {
     user: User;
     canEditTitle: boolean = false;
     title: string = 'Click to Change Title';
-    columns: Column[] = [
-        // {
-        //     heroImage: 'https://popmenucloud.com/evjymlcr/f7fa6f74-a8ee-479e-9e71-bf20a51ff3d4.jpg',
-        //     content: [
-        //         {
-        //             image: 'https://imagesvc.meredithcorp.io/v3/mm/image?q=85&c=sc&poi=face&w=2000&h=1000&url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F43%2F2021%2F04%2F13%2FGettyImages-504780334-2000.jpg',
-        //             text: 'Cheese enters the burger!'
-        //         },
-        //         {
-        //             image: 'https://cdn.britannica.com/77/170677-050-F7333D51/lettuce.jpg',
-        //             text: 'Lettuce in the bun!'
-        //         }
-        //     ]
-        // },
-        // {
-        //     heroImage: 'https://popmenucloud.com/evjymlcr/f7fa6f74-a8ee-479e-9e71-bf20a51ff3d4.jpg',
-        //     content: [
-        //         {
-        //             image: 'https://imagesvc.meredithcorp.io/v3/mm/image?q=85&c=sc&poi=face&w=2000&h=1000&url=https%3A%2F%2Fstatic.onecms.io%2Fwp-content%2Fuploads%2Fsites%2F43%2F2021%2F04%2F13%2FGettyImages-504780334-2000.jpg',
-        //             text: 'Cheese enters the burger!'
-        //         }
-        //     ]
-        // }
-    ];
+    columns: Column[] = [];
     titleCopy: string = '';
     initializedColumnsCopy: Column[] = [];
     uuidCopy: string;

@@ -7,9 +7,10 @@
             <button type="button" class="button is-primary" (click)="navigateToTemplates()">Create New Project</button>
         </div>
         <div class="columns" *ngIf="savedTemplates?.length">
-            <div class="column" *ngFor="let template of savedTemplates">
+            <div class="column column-width" *ngFor="let template of savedTemplates" (mouseenter)="mouseEnterImage(template)" (mouseleave)="mouseLeaveImage(template)">
                 <figure class="image">
-                    <img [src]="template.columns[0].heroImage" (click)="navigateToSavedTemplate(template)">
+                    <img class="img" [src]="template.columns[0].heroImage" (click)="navigateToSavedTemplate(template)">
+                    <button *ngIf="template.showDeleteBtn" class="button is-danger delete-button" (click)="openDeleteModal(template)">D</button>
                 </figure>
             </div>
         </div>

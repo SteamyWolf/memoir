@@ -19,4 +19,5 @@ export interface Template {
     type: string;
     title: string;
     columns: Column[];
+    showDeleteBtn?: boolean;
 }

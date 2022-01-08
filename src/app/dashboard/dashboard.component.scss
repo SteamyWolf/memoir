@@ -1,0 +1,13 @@
+.column-width {
+    max-width: 500px;
+}
+
+.image {
+    position: relative;
+    .delete-button {
+        position: absolute;
+        top: -17px;
+        right: -22px;
+        border-radius: 30px;
+    }
+}

@@ -29,4 +29,16 @@ export class DashboardComponent implements OnInit {
         this.templatesSvc.currentTemplateUUID = template.uuid;
         this.router.navigate([`/${template.type}`]);
     }
+
+    mouseEnterImage(template: Template) {
+        template.showDeleteBtn = true
+    }
+
+    mouseLeaveImage(template: Template) {
+        template.showDeleteBtn = false;
+    }
+
+    openDeleteModal(template: Template) {
+        console.log('delete')
+    }
 }
