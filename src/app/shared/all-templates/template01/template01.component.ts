@@ -94,4 +94,20 @@ export class Template01Component implements OnInit, ComponentCanDeactivate {
         this.columns.pop();
     }
 
+    deleteRow(index: number) {
+        this.columns[index].content!.pop();
+    }
+
+    mouseEnterImage(column: Column) {
+        column.hasEditBtn = true;
+    }
+
+    mouseLeaveImage(column: Column) {
+        column.hasEditBtn = false;
+    }
+
+    uploadImage(event: any, content: any, previousImageUrl: string, index: number) {
+        this.templatesSvc.uploadTemplateImage(event, content, previousImageUrl, index);
+    }
+
 }

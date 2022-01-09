@@ -7,12 +7,16 @@
     <!-- <div class="content"> -->
         <div class="columns">
             <div class="column" *ngFor="let column of columns; let i = index">
-                <div class="is-flex is-justify-content-center mb-3">
+                <div class="image-container is-flex is-justify-content-center mb-3" (mouseenter)="mouseEnterImage(column)" (mouseleave)="mouseLeaveImage(column)">
                     <img class="column-header-image" [src]="column.heroImage">
+                    <button *ngIf="column.hasEditBtn" class="button is-info" (click)="uploadHeroImageInput.click()">E</button>
+                    <input style="display: none;" type="file" (change)="uploadImage($event, column, column.heroImage, i)" #uploadHeroImageInput>
                 </div>
-                <div class="row is-flex is-justify-content-space-evenly my-3" *ngFor="let row of column.content; let last = last">
-                    <div class="left">
+                <div class="row is-flex is-justify-content-space-evenly my-3" *ngFor="let row of column.content; let last = last; let i = index">
+                    <div class="left image">
                         <img class="column-image" [src]="row.image">
+                        <button class="button is-info" (click)="uploadRowImageInput.click()">E</button>
+                        <input style="display: none;" type="file" (change)="uploadImage($event, row, row.image, i)" #uploadRowImageInput>
                     </div>
                     <div class="vl-container">
                         <div class="vl" [ngClass]="{'last-row': last}"></div>
@@ -21,8 +25,9 @@
                         <textarea class="textarea" [value]="row.text" [(ngModel)]="row.text"></textarea>
                     </div>
                 </div>
-                <div class="button-container has-text-centered mt-4">
+                <div class="button-container mt-4 is-flex is-justify-content-space-evenly">
                     <button class="button is-primary" (click)="addRow(i)">Add Row</button>
+                    <button class="button is-danger" *ngIf="columns[i].content!.length" (click)="deleteRow(i)">Delete Row</button>
                 </div>
             </div>
         </div>

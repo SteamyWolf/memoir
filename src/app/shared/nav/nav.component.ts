@@ -97,6 +97,7 @@ export class NavComponent implements OnInit, OnDestroy {
     }
 
     saveTemplate() {
+        // these if checks are because firestore is picky about what data changes so deleting unnecessary data with checks.
         if (!this.user.data?.chosenTemplates) {
             console.log(this.user)
             this.user.data = {chosenTemplates: []}
@@ -106,6 +107,15 @@ export class NavComponent implements OnInit, OnDestroy {
         }
         if (!this.user.displayName) {
             delete this.user.displayName;
+        }
+        if (this.user.data.chosenTemplates) {
+            this.user.data.chosenTemplates.forEach(template => {
+                template.columns.forEach(column => {
+                    if (column.hasEditBtn) {
+                        delete column.hasEditBtn
+                    }
+                })
+            })
         }
         let template = this.user.data!.chosenTemplates.find((template) => template.uuid === this.uuid);
         let index = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.uuid);
@@ -128,6 +138,6 @@ export class NavComponent implements OnInit, OnDestroy {
         console.log(template);
         console.log(this.user)
         this.authService.currentUser.next(this.user);
-        this.templatesSvc.saveTemplateToFirebase();
+        this.templatesSvc.updateUserOnFireStore();
     }
 }

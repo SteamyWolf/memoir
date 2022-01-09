@@ -1,7 +1,8 @@
 export class Column {
     constructor(
         public heroImage: string,
-        public content?: Content[]
+        public content?: Content[],
+        public hasEditBtn?: boolean
     ) {}
 }
 

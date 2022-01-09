@@ -45,3 +45,13 @@
     z-index: 30;
     right: 1%;
 }
+
+.image-container {
+    position: relative;
+    .button {
+        position: absolute;
+        top: -17px;
+        right: -22px;
+        border-radius: 30px;
+    }
+}

@@ -10,13 +10,16 @@ import { TemplatesService } from '../shared/all-templates/templates.service';
     styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-    savedTemplates: Template[] | undefined = [];
+    user: User;
+    savedTemplates: Template[] = [];
+    deleteModal: boolean = false;
     constructor(private authService: AuthService, private router: Router, private templatesSvc: TemplatesService) { }
 
     ngOnInit(): void {
         this.authService.currentUser.subscribe((user: User) => {
-            if (user) {
-                this.savedTemplates = user.data?.chosenTemplates;
+            this.user = user;
+            if (user && user.data?.chosenTemplates) {
+                this.savedTemplates = user.data.chosenTemplates;
             }
         })
     }
@@ -38,7 +41,20 @@ export class DashboardComponent implements OnInit {
         template.showDeleteBtn = false;
     }
 
-    openDeleteModal(template: Template) {
+    openDeleteModal() {
         console.log('delete')
+        this.deleteModal = true;
+    }
+
+    closeModal() {
+        this.deleteModal = false;
+    }
+
+    deleteTemplate(template: Template) {
+        this.savedTemplates = this.savedTemplates?.filter(tem => tem.uuid !== template.uuid);
+        this.user.data!.chosenTemplates = this.savedTemplates;
+        this.authService.currentUser.next(this.user);
+        this.templatesSvc.updateUserOnFireStore();
+        this.deleteModal = false;
     }
 }
