@@ -11,6 +11,7 @@ import { DeactivateGuard } from './shared/deactivate/deactivate.guard';
 import { TemplatesComponent } from './templates/templates.component';
 import { Template01Component } from './shared/all-templates/template01/template01.component';
 import { Template02Component } from './shared/all-templates/template02/template02.component';
+import { TemplateDeactivateGuard } from './shared/all-templates/template01/deactivate-template01.guard';
 
 const routes: Routes = [
     {
@@ -31,7 +32,7 @@ const routes: Routes = [
         path: 'template01',
         component: Template01Component,
         canActivate: [AuthGuard],
-        canDeactivate: [DeactivateGuard]
+        canDeactivate: [TemplateDeactivateGuard]
     },
     {
         path: 'template02',

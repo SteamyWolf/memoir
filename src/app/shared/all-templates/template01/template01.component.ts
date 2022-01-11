@@ -6,48 +6,62 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
 import { ComponentCanDeactivate } from '../../deactivate/deactivate.guard';
 import { Observable } from 'rxjs';
+import { TemplateCanDeactivate } from './deactivate-template01.guard';
 
 @Component({
     selector: 'app-template01',
     templateUrl: './template01.component.html',
     styleUrls: ['./template01.component.scss']
 })
-export class Template01Component implements OnInit, ComponentCanDeactivate {
+export class Template01Component implements OnInit, TemplateCanDeactivate {
     user: User;
     canEditTitle: boolean = false;
     title: string = 'Click to Change Title';
     columns: Column[] = [];
     titleCopy: string = '';
-    initializedColumnsCopy: Column[] = [];
+    columnsCopy: Column[] = [];
     uuidCopy: string;
     @ViewChild('titleInput') titleInput: ElementRef;
 
-    constructor(private templatesSvc: TemplatesService, private authService: AuthService) {}
+    constructor(private templatesSvc: TemplatesService, private authService: AuthService) { }
 
-    @HostListener('window:beforeunload')
-    canDeactivate(): Observable<boolean> | boolean {
+    @HostListener('window:beforeunload') canDeactivate(): Observable<boolean> | boolean {
         this.templatesSvc.currentTemplateUUID = '';
-        if (JSON.stringify(this.initializedColumnsCopy) !== JSON.stringify(this.columns) || this.titleCopy !== this.title) {
-            console.log('MADE IT INSIDE')
-            setTimeout(() => {
-                console.log('STAYED!!!')
-                this.templatesSvc.currentTemplateUUID = this.uuidCopy;
-            }, 10)
+        console.log(JSON.stringify(this.columns[1].content))
+        console.log(JSON.stringify(this.columnsCopy[1].content))
+        if (JSON.stringify(this.columnsCopy) !== JSON.stringify(this.columns) || this.titleCopy !== this.title) {
             return false;
         }
         return true;
     } // still broken
 
-    @HostListener('window:unload')
-    unloadHandler() {
+    @HostListener('window:unload') unloadHandler() {
         console.log('unload event')
     }
 
     ngOnInit(): void {
         this.authService.currentUser.subscribe((user: User) => {
+            console.log(user)
             this.user = user;
+            let template = this.user.data?.chosenTemplates.find(template => template.uuid === this.templatesSvc.currentTemplateUUID);
+            if (template) {
+                // if user has a saved template with this template in their database
+                this.templatesSvc.currentTemplateUUID = template.uuid;
+                this.uuidCopy = template.uuid;
+                this.title = template!.title;
+                this.columns = template!.columns;
+                this.columnsCopy = JSON.parse(JSON.stringify(template!.columns))
+                this.titleCopy = template!.title
+            } else {
+                // user has created a new project
+                this.templatesSvc.currentTemplateUUID = uuid();
+                this.uuidCopy = this.templatesSvc.currentTemplateUUID;
+                this.addColumn();
+                this.columnsCopy = JSON.parse(JSON.stringify(this.columns));
+                this.titleCopy = this.title;
+            }
         })
-        this.loadNewOrSavedTemplate();
+        // this.loadNewOrSavedTemplate();
     }
 
     loadNewOrSavedTemplate() {
@@ -58,14 +72,14 @@ export class Template01Component implements OnInit, ComponentCanDeactivate {
             this.uuidCopy = template.uuid;
             this.title = template!.title;
             this.columns = template!.columns;
-            this.initializedColumnsCopy = [...template!.columns];
+            this.columnsCopy = JSON.parse(JSON.stringify(template!.columns))
             this.titleCopy = template!.title
         } else {
             // user has created a new project
             this.templatesSvc.currentTemplateUUID = uuid();
             this.uuidCopy = this.templatesSvc.currentTemplateUUID;
             this.addColumn();
-            this.initializedColumnsCopy = [...this.columns];
+            this.columnsCopy = JSON.parse(JSON.stringify(this.columns));
             this.titleCopy = this.title;
         }
     }
@@ -106,8 +120,8 @@ export class Template01Component implements OnInit, ComponentCanDeactivate {
         column.hasEditBtn = false;
     }
 
-    uploadImage(event: any, content: any, previousImageUrl: string, index: number) {
-        this.templatesSvc.uploadTemplateImage(event, content, previousImageUrl, index);
+    uploadImage(event: any, content: any, previousImageUrl: string, columnIndex: number, rowIndex?: number) {
+        this.templatesSvc.uploadTemplateImage(event, content, previousImageUrl, columnIndex, rowIndex);
     }
 
 }

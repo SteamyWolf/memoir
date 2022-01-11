@@ -25,12 +25,11 @@ export class TemplatesService {
             })
     }
 
-    uploadTemplateImage(event: any, content: any, previousImageUrl: string, index: number) {
+    uploadTemplateImage(event: any, content: any, previousImageUrl: string, columnIndex: number, rowIndex?: number) {
         console.log(event, content)
         const file: File = event.target.files[0];
         let filePath: string;
         if (content.heroImage) {
-            console.log('This is a column');
             filePath = `columnHeroImage=${this.currentTemplateUUID}=${uuid()}`;
             this.afStorage.upload(filePath, file).then(taskSnapshot => {
                 console.log(taskSnapshot)
@@ -39,18 +38,36 @@ export class TemplatesService {
                 }
                 let currentTemplate = this.user.data!.chosenTemplates.find(template => template.uuid === this.currentTemplateUUID);
                 let currentTemplateIndex = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.currentTemplateUUID)
-                let column = currentTemplate!.columns[index]
+                let column = currentTemplate!.columns[columnIndex]
                 this.afStorage.ref(taskSnapshot.metadata.fullPath).getDownloadURL().subscribe(url => {
                     column.heroImage = url;
-                    this.user.data!.chosenTemplates[currentTemplateIndex].columns[index] = column;
+                    this.user.data!.chosenTemplates[currentTemplateIndex].columns[columnIndex] = column;
                     this.authSvc.currentUser.next(this.user);
                 })
             }).catch(err => {
                 console.error(err)
             })
         } else {
-            console.log('this is a row')
-            filePath = `rowImage=${this.currentTemplateUUID}=${uuid()}`
+            if (rowIndex) {
+                filePath = `rowImage=${this.currentTemplateUUID}=${uuid()}`
+                this.afStorage.upload(filePath, file).then(taskSnapshot => {
+                    console.log(taskSnapshot)
+                    if (!previousImageUrl.includes('../../../../assets/image-placeholder.jpeg')) {
+                        this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
+                    }
+                    let currentTemplate = this.user.data!.chosenTemplates.find(template => template.uuid === this.currentTemplateUUID);
+                    let currentTemplateIndex = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.currentTemplateUUID)
+                    let column = currentTemplate!.columns[columnIndex];
+                    let row = column.content![rowIndex];
+                    this.afStorage.ref(taskSnapshot.metadata.fullPath).getDownloadURL().subscribe(url => {
+                        row.image = url;
+                        this.user.data!.chosenTemplates[currentTemplateIndex].columns[columnIndex].content![rowIndex] = row;
+                        this.authSvc.currentUser.next(this.user);
+                    })
+                }).catch(err => {
+                    console.error(err)
+                })
+            }
         }
         
     }
