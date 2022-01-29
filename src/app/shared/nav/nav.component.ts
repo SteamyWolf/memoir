@@ -24,6 +24,8 @@ export class NavComponent implements OnInit, OnDestroy {
     @Input() columns: Column[];
     @Input() type: string;
     @Input() title: string;
+    @Input() saveDisabled: boolean;
+    @Input() imagesToUpload: any[];
     constructor(
         private router: Router, 
         private route: ActivatedRoute, 
@@ -99,7 +101,6 @@ export class NavComponent implements OnInit, OnDestroy {
     saveTemplate() {
         // these if checks are because firestore is picky about what data changes so deleting unnecessary data with checks.
         if (!this.user.data?.chosenTemplates) {
-            console.log(this.user)
             this.user.data = {chosenTemplates: []}
         }
         if (!this.user.photoUrl) {
@@ -117,10 +118,15 @@ export class NavComponent implements OnInit, OnDestroy {
                 })
             })
         }
+        //end 
+        // The following section uploads Input images
+        this.imagesToUpload.forEach(image => {
+            this.templatesSvc.uploadTemplateImage(image.event, image.content, image.previousImageUrl, image.columnIndex, image.rowIndex)
+        })
+        // end
         let template = this.user.data!.chosenTemplates.find((template) => template.uuid === this.uuid);
         let index = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.uuid);
         const columns = JSON.parse(JSON.stringify(this.columns));
-        console.log(columns);
         if (template) {
             template.columns = columns;
             template.title = this.title;
@@ -135,8 +141,6 @@ export class NavComponent implements OnInit, OnDestroy {
             }
             this.user.data?.chosenTemplates.push(template);
         }
-        console.log(template);
-        console.log(this.user)
         this.authService.currentUser.next(this.user);
         this.templatesSvc.updateUserOnFireStore();
     }

@@ -42,7 +42,6 @@ export class DashboardComponent implements OnInit {
     }
 
     openDeleteModal() {
-        console.log('delete')
         this.deleteModal = true;
     }
 

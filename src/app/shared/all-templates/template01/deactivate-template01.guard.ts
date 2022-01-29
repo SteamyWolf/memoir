@@ -20,10 +20,11 @@ export class TemplateDeactivateGuard implements CanDeactivate<TemplateCanDeactiv
             let choice = confirm('WARNING: You have unsaved changes. Press Cancel to go back and save these changes, or OK to lose these changes.')
             if (choice) {
                 console.log('has chosen true?')
-                console.log(component.columnsCopy)
                 let template = component.user.data!.chosenTemplates.find(template => template.uuid === component.uuidCopy);
                 let templateIndex = component.user.data!.chosenTemplates.findIndex(template => template.uuid === component.uuidCopy);
                 if (template) { // should always be true but typeScript is a weeenie.
+                    console.log(template.columns)
+                    console.log(component.columnsCopy)
                     template!.title = component.titleCopy;
                     template!.columns = component.columnsCopy;
                     component.user.data!.chosenTemplates[templateIndex] = template;

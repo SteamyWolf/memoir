@@ -48,7 +48,7 @@
                 <span class="is-active cursor" (click)="dashboardNavigate()">Dashboard</span>
             </div>
             <div class="navbar-item mr-4">
-                <button class="button is-info" (click)="saveTemplate()">Save</button>
+                <button class="button is-info" [disabled]="saveDisabled" (click)="saveTemplate()">Save</button>
             </div>
         </div>
     </div>

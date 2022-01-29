@@ -9,6 +9,7 @@ export class Column {
 export class Content {
     constructor(
         public image: string,
-        public text: string
+        public text: string,
+        public hasEditBtn?: boolean
     ) {}
 }

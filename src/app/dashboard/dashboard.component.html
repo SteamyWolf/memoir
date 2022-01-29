@@ -2,14 +2,14 @@
 
 <div class="container">
     <section class="section">
-        <div class="is-flex is-justify-content-space-between is-align-content-center">
+        <div class="is-flex is-align-content-center">
             <h1 class="title">Your Saved Projects</h1>
-            <button type="button" class="button is-primary" (click)="navigateToTemplates()">Create New Project</button>
+            <button type="button" class="button is-primary ml-3" (click)="navigateToTemplates()">Create New Project</button>
         </div>
         <div class="columns" *ngIf="savedTemplates?.length">
             <div class="column column-width" *ngFor="let template of savedTemplates" (mouseenter)="mouseEnterImage(template)" (mouseleave)="mouseLeaveImage(template)">
-                <figure class="image">
-                    <img class="img" [src]="template.columns[0].heroImage" (click)="navigateToSavedTemplate(template)">
+                <figure class="image-container">
+                    <img class="dashboard-image" [src]="template.columns[0].heroImage" (click)="navigateToSavedTemplate(template)">
                     <button *ngIf="template.showDeleteBtn" class="button is-danger delete-button" (click)="openDeleteModal()">D</button>
                 </figure>
                 <div class="modal" [ngClass]="{'is-active': deleteModal}">

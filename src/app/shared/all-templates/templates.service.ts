@@ -16,7 +16,7 @@ export class TemplatesService {
     }
 
     updateUserOnFireStore() {
-        this.afStore.doc(`users/${this.user.uId}`).update(this.user)
+        this.afStore.doc(`users/${this.user.uId}`).update(JSON.parse(JSON.stringify(this.user)))
             .then(() => {
                 console.log('SUCCESS')
             })
@@ -26,13 +26,11 @@ export class TemplatesService {
     }
 
     uploadTemplateImage(event: any, content: any, previousImageUrl: string, columnIndex: number, rowIndex?: number) {
-        console.log(event, content)
         const file: File = event.target.files[0];
         let filePath: string;
         if (content.heroImage) {
             filePath = `columnHeroImage=${this.currentTemplateUUID}=${uuid()}`;
             this.afStorage.upload(filePath, file).then(taskSnapshot => {
-                console.log(taskSnapshot)
                 if (!previousImageUrl.includes('../../../../assets/image-placeholder.jpeg')) {
                     this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
                 }
@@ -51,7 +49,6 @@ export class TemplatesService {
             if (rowIndex) {
                 filePath = `rowImage=${this.currentTemplateUUID}=${uuid()}`
                 this.afStorage.upload(filePath, file).then(taskSnapshot => {
-                    console.log(taskSnapshot)
                     if (!previousImageUrl.includes('../../../../assets/image-placeholder.jpeg')) {
                         this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
                     }

@@ -1,22 +1,21 @@
-<app-nav [uuid]="uuidCopy" [title]="title" [columns]="columns" [type]="'template01'"></app-nav>
+<app-nav [uuid]="uuidCopy" [title]="title" [columns]="columns" [type]="'template01'" [saveDisabled]="saveDisabled" [imagesToUpload]="imagesToUpload"></app-nav>
 <div class="container">
     <div class="title-container has-text-centered my-6">
         <h1 *ngIf="!canEditTitle" class="title" (click)="editTitle()">{{ title }}</h1>
         <input *ngIf="canEditTitle" class="title" type="text" [(ngModel)]="title" (blur)="editTitle()" #titleInput>
     </div>
-    <!-- <div class="content"> -->
         <div class="columns">
             <div class="column" *ngFor="let column of columns; let columnIndex = index">
                 <div class="image-container is-flex is-justify-content-center mb-3" (mouseenter)="mouseEnterImage(column)" (mouseleave)="mouseLeaveImage(column)">
                     <img class="column-header-image" [src]="column.heroImage">
                     <button *ngIf="column.hasEditBtn" class="button is-info" (click)="uploadHeroImageInput.click()">E</button>
-                    <input style="display: none;" type="file" (change)="uploadImage($event, column, column.heroImage, columnIndex)" #uploadHeroImageInput>
+                    <input style="display: none;" type="file" (change)="setImageLocally($event, column, column.heroImage, columnIndex)" #uploadHeroImageInput>
                 </div>
                 <div class="row is-flex is-justify-content-space-evenly my-3" *ngFor="let row of column.content; let last = last; let rowIndex = index">
-                    <div class="left image">
+                    <div class="left image-container" (mouseenter)="mouseEnterImageRow(row)" (mouseleave)="mouseLeaveImageRow(row)">
                         <img class="column-image" [src]="row.image">
-                        <button class="button is-info" (click)="uploadRowImageInput.click()">E</button>
-                        <input style="display: none;" type="file" (change)="uploadImage($event, row, row.image, columnIndex, rowIndex)" #uploadRowImageInput>
+                        <button *ngIf="row.hasEditBtn" class="button is-info" (click)="uploadRowImageInput.click()">E</button>
+                        <input style="display: none;" type="file" (change)="setImageLocally($event, row, row.image, columnIndex, rowIndex)" #uploadRowImageInput>
                     </div>
                     <div class="vl-container">
                         <div class="vl" [ngClass]="{'last-row': last}"></div>
@@ -31,7 +30,6 @@
                 </div>
             </div>
         </div>
-    <!-- </div> -->
 </div>
 <div class="add-new-column">
     <button class="button is-primary mb-2" (click)="addColumn()">P</button>
