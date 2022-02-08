@@ -23,6 +23,7 @@ import { SubscriptionComponent } from './profile/subscription/subscription.compo
 import { TemplatesComponent } from './templates/templates.component';
 import { Template01Component } from './shared/all-templates/template01/template01.component';
 import { Template02Component } from './shared/all-templates/template02/template02.component';
+import { SafeUrlPipe } from './shared/pipes/safe.pipe';
 
 @NgModule({
   declarations: [
@@ -36,7 +37,8 @@ import { Template02Component } from './shared/all-templates/template02/template0
     SubscriptionComponent,
     TemplatesComponent,
     Template01Component,
-    Template02Component
+    Template02Component,
+    SafeUrlPipe
   ],
   imports: [
     BrowserModule,

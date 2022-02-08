@@ -19,6 +19,7 @@ export class TemplatesService {
         this.afStore.doc(`users/${this.user.uId}`).update(JSON.parse(JSON.stringify(this.user)))
             .then(() => {
                 console.log('SUCCESS')
+                this.authSvc.currentUser.next(this.user);
             })
             .catch(err => {
                 console.error(err);
@@ -28,9 +29,10 @@ export class TemplatesService {
     uploadTemplateImage(event: any, content: any, previousImageUrl: string, columnIndex: number, rowIndex?: number) {
         const file: File = event.target.files[0];
         let filePath: string;
+        // if a column --->
         if (content.heroImage) {
             filePath = `columnHeroImage=${this.currentTemplateUUID}=${uuid()}`;
-            this.afStorage.upload(filePath, file).then(taskSnapshot => {
+            return this.afStorage.upload(filePath, file).then(taskSnapshot => {
                 if (!previousImageUrl.includes('../../../../assets/image-placeholder.jpeg')) {
                     this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
                 }
@@ -46,9 +48,10 @@ export class TemplatesService {
                 console.error(err)
             })
         } else {
+            // if a row ----->
             if (rowIndex) {
                 filePath = `rowImage=${this.currentTemplateUUID}=${uuid()}`
-                this.afStorage.upload(filePath, file).then(taskSnapshot => {
+                return this.afStorage.upload(filePath, file).then(taskSnapshot => {
                     if (!previousImageUrl.includes('../../../../assets/image-placeholder.jpeg')) {
                         this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
                     }
@@ -64,6 +67,8 @@ export class TemplatesService {
                 }).catch(err => {
                     console.error(err)
                 })
+            } else {
+                return null;
             }
         }
         

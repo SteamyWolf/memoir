@@ -7,6 +7,7 @@ import { User } from 'src/app/auth/user.model';
 import { ComponentCanDeactivate } from '../../deactivate/deactivate.guard';
 import { Observable } from 'rxjs';
 import { TemplateCanDeactivate } from './deactivate-template01.guard';
+import * as angular from '@angular/core';
 
 @Component({
     selector: 'app-template01',
@@ -41,6 +42,7 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
         this.authService.currentUser.subscribe((user: User) => {
             if (user) {
                 this.user = user;
+                console.log(user);
                 this.loadNewOrSavedTemplate();
             }  
         })
@@ -62,22 +64,21 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             this.uuidCopy = template.uuid;
             this.title = template!.title;
             this.columns = template!.columns;
-            // this.columnsCopy = JSON.parse(JSON.stringify(template!.columns));
-            this.columnsCopy = this.columns.map((column: any) => {
-                let newColumn = {};
-                Object.keys(column).forEach((key: string) => {
-                    (newColumn as any)[key] = column[key]
-                })
-                return newColumn;
-            })
-            console.log(this.columnsCopy)
+            this.columnsCopy = JSON.parse(JSON.stringify(template!.columns));
+            // this.columnsCopy = this.columns.map((column: any) => {
+            //     let newColumn = {};
+            //     Object.keys(column).forEach((key: string) => {
+            //         (newColumn as any)[key] = column[key]
+            //     })
+            //     return newColumn;
+            // })
             this.titleCopy = template!.title;
         } else {
             // user has created a new project
             this.templatesSvc.currentTemplateUUID = uuid();
             this.uuidCopy = this.templatesSvc.currentTemplateUUID;
             this.addColumn();
-            this.columnsCopy = JSON.parse(JSON.stringify(this.columns));
+            this.columnsCopy = [];
             this.titleCopy = this.title;
         }
     }
@@ -103,7 +104,9 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
     }
 
     deleteColumn() {
-        this.columns.pop();
+        let deletedColumn = this.columns.pop();
+        // this.imagesToUpload.findIndex(imageUrl => )
+        // deletedColumn?.heroImage
     }
 
     deleteRow(index: number) {
@@ -127,27 +130,49 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
     }
 
     setImageLocally(event: any, content: any, previousImageUrl: string, columnIndex: number, rowIndex?: number) {
-        const reader = new FileReader();
+        // const reader = new FileReader();
 
-        reader.onload = (ev) => {            
-            let localImage = {
-                event: event,
-                content: content,
-                previousImageUrl: previousImageUrl,
-                columnIndex: columnIndex,
-                rowIndex: rowIndex,
-                result: reader.result
-            }
+        // reader.onload = (ev) => {            
+        //     let localImage = {
+        //         event: event,
+        //         content: content,
+        //         previousImageUrl: previousImageUrl,
+        //         columnIndex: columnIndex,
+        //         rowIndex: rowIndex,
+        //         result: reader.result
+        //     }
 
-            if (localImage.content.heroImage) {
-                this.columns[columnIndex].heroImage = reader.result!.toString();
-            } else {
-                this.columns[columnIndex].content![rowIndex!].image = reader.result!.toString();
-            }
+        //     if (localImage.content.heroImage) {
+        //         this.columns[columnIndex].heroImage = reader.result!.toString();
+        //     } else {
+        //         this.columns[columnIndex].content![rowIndex!].image = reader.result!.toString();
+        //     }
 
-            this.imagesToUpload.push(localImage);
+        //     this.imagesToUpload.push(localImage);
+        // }
+
+        // reader.readAsDataURL(event.target.files[0])
+
+
+        let url = URL.createObjectURL(event.target.files[0]);
+
+        let localImage = {
+            event: event,
+            content: content,
+            previousImageUrl: previousImageUrl,
+            columnIndex: columnIndex,
+            rowIndex: rowIndex,
+            result: url
         }
 
-        reader.readAsDataURL(event.target.files[0])
+        if (localImage.content.heroImage) {
+            this.columns[columnIndex].heroImage = url;
+        } else {
+            this.columns[columnIndex].content![rowIndex!].image = url;
+        }
+
+        this.imagesToUpload.push(localImage);
+
+        console.log(fetch(url).then(r => r.blob()));
     }
 }
