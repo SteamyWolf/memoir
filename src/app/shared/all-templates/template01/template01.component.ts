@@ -4,10 +4,8 @@ import { v4 as uuid } from 'uuid';
 import { TemplatesService } from '../templates.service';
 import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
-import { ComponentCanDeactivate } from '../../deactivate/deactivate.guard';
 import { Observable } from 'rxjs';
 import { TemplateCanDeactivate } from './deactivate-template01.guard';
-import * as angular from '@angular/core';
 
 @Component({
     selector: 'app-template01',
@@ -105,12 +103,26 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
 
     deleteColumn() {
         let deletedColumn = this.columns.pop();
-        // this.imagesToUpload.findIndex(imageUrl => )
-        // deletedColumn?.heroImage
+        if (deletedColumn?.heroImage.includes('blob')) {
+            let index = this.imagesToUpload.findIndex(localImage => localImage.temporaryUrl === deletedColumn?.heroImage);
+            this.imagesToUpload.splice(index, 1);
+        }
+        if (deletedColumn?.content && deletedColumn.content.length) {
+            deletedColumn?.content?.forEach(row => {
+                if (row.image.includes('blob')) {
+                    let index = this.imagesToUpload.findIndex(localImage => localImage.temporaryUrl === row.image);
+                    this.imagesToUpload.splice(index, 1);
+                }
+            })
+        }
+        // find a way to delete all of the images that the user has deleted if they exist on firebase. But only once the user hits save. Probably best in the nav component.
     }
 
     deleteRow(index: number) {
-        this.columns[index].content!.pop();
+        let deletedRow = this.columns[index].content!.pop();
+        if (deletedRow?.image.includes('blob')) {
+            this.imagesToUpload.findIndex(localImage => localImage.temporaryUrl === deletedRow?.image);
+        }
     }
 
     mouseEnterImage(column: Column) {
@@ -130,30 +142,6 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
     }
 
     setImageLocally(event: any, content: any, previousImageUrl: string, columnIndex: number, rowIndex?: number) {
-        // const reader = new FileReader();
-
-        // reader.onload = (ev) => {            
-        //     let localImage = {
-        //         event: event,
-        //         content: content,
-        //         previousImageUrl: previousImageUrl,
-        //         columnIndex: columnIndex,
-        //         rowIndex: rowIndex,
-        //         result: reader.result
-        //     }
-
-        //     if (localImage.content.heroImage) {
-        //         this.columns[columnIndex].heroImage = reader.result!.toString();
-        //     } else {
-        //         this.columns[columnIndex].content![rowIndex!].image = reader.result!.toString();
-        //     }
-
-        //     this.imagesToUpload.push(localImage);
-        // }
-
-        // reader.readAsDataURL(event.target.files[0])
-
-
         let url = URL.createObjectURL(event.target.files[0]);
 
         let localImage = {
@@ -162,7 +150,7 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             previousImageUrl: previousImageUrl,
             columnIndex: columnIndex,
             rowIndex: rowIndex,
-            result: url
+            temporaryUrl: url 
         }
 
         if (localImage.content.heroImage) {
@@ -172,7 +160,5 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
         }
 
         this.imagesToUpload.push(localImage);
-
-        console.log(fetch(url).then(r => r.blob()));
     }
 }
