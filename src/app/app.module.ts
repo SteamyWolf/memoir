@@ -23,6 +23,10 @@ import { SubscriptionComponent } from './profile/subscription/subscription.compo
 import { TemplatesComponent } from './templates/templates.component';
 import { Template01Component } from './shared/all-templates/template01/template01.component';
 import { Template02Component } from './shared/all-templates/template02/template02.component';
+import { FooterComponent } from './shared/footer/footer.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconsModule } from './shared/icons/icons.module';
+
 
 @NgModule({
   declarations: [
@@ -36,7 +40,8 @@ import { Template02Component } from './shared/all-templates/template02/template0
     SubscriptionComponent,
     TemplatesComponent,
     Template01Component,
-    Template02Component
+    Template02Component,
+    FooterComponent,
   ],
   imports: [
     BrowserModule,
@@ -49,7 +54,9 @@ import { Template02Component } from './shared/all-templates/template02/template0
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule,
+    IconsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
