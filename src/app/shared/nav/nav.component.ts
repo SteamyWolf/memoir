@@ -26,12 +26,15 @@ export class NavComponent implements OnInit, OnDestroy {
     @Input() title: string;
     @Input() saveDisabled: boolean;
     @Input() imagesToUpload: any[];
+    @Input() imagesToDelete: any[];
+
     @Output() imagesToUploadChange: EventEmitter<any[]> = new EventEmitter<any[]>();
+    @Output() imagesToDeleteChange: EventEmitter<any[]> = new EventEmitter<any[]>();
     constructor(
-        private router: Router, 
-        private route: ActivatedRoute, 
-        private authService: AuthService, 
-        private profileScv: ProfileService, 
+        private router: Router,
+        private route: ActivatedRoute,
+        private authService: AuthService,
+        private profileScv: ProfileService,
         private afStorage: AngularFireStorage,
         private templatesSvc: TemplatesService
         ) {}
@@ -139,19 +142,29 @@ export class NavComponent implements OnInit, OnDestroy {
         }
         // The following section uploads Input images
         if (this.imagesToUpload.length) {
-            await this.uploadImages().catch(err => console.error(err));
+            await this.uploadImages();
+        }
+        if (this.imagesToDelete.length) {
+            await this.deleteImages();
         }
         // end
         
-        console.log(this.user)
         this.templatesSvc.updateUserOnFireStore();
     }
 
-    async uploadImages() {
+    private async uploadImages() {
         await Promise.all(this.imagesToUpload.map(image => {
             return this.templatesSvc.uploadTemplateImage(image.event, image.content, image.previousImageUrl, image.columnIndex, image.rowIndex)
         })).then(() => {
             this.imagesToUploadChange.next([]);
-        })
+        }).catch(err => console.error(err));
+    }
+
+    private async deleteImages() {
+        await Promise.all(this.imagesToDelete.map(url => {
+            return this.templatesSvc.deleteImages(url);
+        })).then(() => {
+            this.imagesToDeleteChange.next([]);
+        }).catch(err => console.error(err));
     }
 }
