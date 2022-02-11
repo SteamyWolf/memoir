@@ -5,6 +5,8 @@ import { AuthService } from "src/app/auth/auth.service";
 import { User } from "src/app/auth/user.model";
 import { v4 as uuid } from 'uuid';
 import { tap } from 'rxjs/operators';
+import { UploadTaskSnapshot } from "@angular/fire/compat/storage/interfaces";
+import { Template } from '../../auth/user.model';
 
 @Injectable({providedIn: 'root'})
 export class TemplatesService {
@@ -33,7 +35,9 @@ export class TemplatesService {
         // if a column --->
         if (content.heroImage) {
             filePath = `columnHeroImage=${this.currentTemplateUUID}=${uuid()}`;
+
             let taskSnapshot = await this.afStorage.upload(filePath, file);
+
             if (!previousImageUrl.includes('image-placeholder.jpeg') && !previousImageUrl.includes('blob')) {
                 await this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
             }
@@ -52,7 +56,7 @@ export class TemplatesService {
                 filePath = `rowImage=${this.currentTemplateUUID}=${uuid()}`
                 let taskSnapshot = await this.afStorage.upload(filePath, file);
                 if (!previousImageUrl.includes('image-placeholder.jpeg') && !previousImageUrl.includes('blob')) {
-                    this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
+                    await this.afStorage.refFromURL(previousImageUrl).delete().toPromise().catch(err => console.error(err));
                 }
                 let currentTemplate = this.user.data!.chosenTemplates.find(template => template.uuid === this.currentTemplateUUID);
                 let currentTemplateIndex = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.currentTemplateUUID)

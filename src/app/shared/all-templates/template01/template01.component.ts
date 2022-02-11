@@ -28,8 +28,6 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
 
     @HostListener('window:beforeunload') canDeactivate(): Observable<boolean> | boolean {
         this.templatesSvc.currentTemplateUUID = '';
-        // console.log(JSON.stringify(this.columns[1].content))
-        // console.log(JSON.stringify(this.columnsCopy[1].content))
         if (JSON.stringify(this.columnsCopy) !== JSON.stringify(this.columns) || this.titleCopy !== this.title) {
             return false;
         }
@@ -41,9 +39,10 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             if (user) {
                 this.user = user;
                 console.log(user);
-                this.loadNewOrSavedTemplate();
+                this.updateDataFromUserChange();
             }  
         })
+        this.loadNewOrSavedTemplate();
     }
 
     ngDoCheck(): void {
@@ -51,6 +50,16 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             this.saveDisabled = false;
         } else {
             this.saveDisabled = true;
+        }
+    }
+
+    updateDataFromUserChange() {
+        let template = this.user.data?.chosenTemplates.find(template => template.uuid === this.templatesSvc.currentTemplateUUID);
+        if (template) {
+            this.columns = template!.columns;
+            this.columnsCopy = JSON.parse(JSON.stringify(template!.columns));
+        } else {
+            this.columnsCopy = [];
         }
     }
 
@@ -63,13 +72,6 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             this.title = template!.title;
             this.columns = template!.columns;
             this.columnsCopy = JSON.parse(JSON.stringify(template!.columns));
-            // this.columnsCopy = this.columns.map((column: any) => {
-            //     let newColumn = {};
-            //     Object.keys(column).forEach((key: string) => {
-            //         (newColumn as any)[key] = column[key]
-            //     })
-            //     return newColumn;
-            // })
             this.titleCopy = template!.title;
         } else {
             // user has created a new project
@@ -159,6 +161,12 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             this.columns[columnIndex].content![rowIndex!].image = url;
         }
 
+        if (previousImageUrl.includes('blob')) {
+            let index = this.imagesToUpload.findIndex(image => image.previousImageUrl === previousImageUrl);
+            this.imagesToUpload.splice(index, 1);
+        }
+
         this.imagesToUpload.push(localImage);
+        console.log(this.imagesToUpload);
     }
 }

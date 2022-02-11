@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -26,6 +26,7 @@ export class NavComponent implements OnInit, OnDestroy {
     @Input() title: string;
     @Input() saveDisabled: boolean;
     @Input() imagesToUpload: any[];
+    @Output() imagesToUploadChange: EventEmitter<any[]> = new EventEmitter<any[]>();
     constructor(
         private router: Router, 
         private route: ActivatedRoute, 
@@ -119,22 +120,16 @@ export class NavComponent implements OnInit, OnDestroy {
             })
         }
         //end 
-        // The following section uploads Input images
-        if (this.imagesToUpload.length) {
-            await this.uploadImages().catch(err => console.error(err));
-        }
-        // end
-        // this.uploadImages
+        const columns = JSON.parse(JSON.stringify(this.columns));
         let template = this.user.data!.chosenTemplates.find((template) => template.uuid === this.uuid);
         let index = this.user.data!.chosenTemplates.findIndex(template => template.uuid === this.uuid);
-        const columns = JSON.parse(JSON.stringify(this.columns));
         if (template) {
             template.columns = columns;
             template.title = this.title;
             template.type = this.type;
             this.user.data!.chosenTemplates.splice(index, 1, template);
         } else {
-            let template: Template = {
+            template = {
                 uuid: this.uuid,
                 type: this.type,
                 title: this.title,
@@ -142,6 +137,12 @@ export class NavComponent implements OnInit, OnDestroy {
             }
             this.user.data?.chosenTemplates.push(template);
         }
+        // The following section uploads Input images
+        if (this.imagesToUpload.length) {
+            await this.uploadImages().catch(err => console.error(err));
+        }
+        // end
+        
         console.log(this.user)
         this.templatesSvc.updateUserOnFireStore();
     }
@@ -149,6 +150,8 @@ export class NavComponent implements OnInit, OnDestroy {
     async uploadImages() {
         await Promise.all(this.imagesToUpload.map(image => {
             return this.templatesSvc.uploadTemplateImage(image.event, image.content, image.previousImageUrl, image.columnIndex, image.rowIndex)
-        }))
+        })).then(() => {
+            this.imagesToUploadChange.next([]);
+        })
     }
 }
