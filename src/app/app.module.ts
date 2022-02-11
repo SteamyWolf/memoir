@@ -26,7 +26,7 @@ import { Template02Component } from './shared/all-templates/template02/template0
 import { FooterComponent } from './shared/footer/footer.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconsModule } from './shared/icons/icons.module';
-
+import { SafeUrlPipe } from './shared/pipes/safe.pipe';
 
 @NgModule({
   declarations: [
@@ -42,6 +42,7 @@ import { IconsModule } from './shared/icons/icons.module';
     Template01Component,
     Template02Component,
     FooterComponent,
+    SafeUrlPipe
   ],
   imports: [
     BrowserModule,

@@ -7,13 +7,13 @@
         <div class="columns">
             <div class="column" *ngFor="let column of columns; let columnIndex = index">
                 <div class="image-container is-flex is-justify-content-center mb-3" (mouseenter)="mouseEnterImage(column)" (mouseleave)="mouseLeaveImage(column)">
-                    <img class="column-header-image" [src]="column.heroImage">
+                    <img class="column-header-image" [src]="column.heroImage | safeResourceUrl">
                     <button *ngIf="column.hasEditBtn" class="button is-info" (click)="uploadHeroImageInput.click()">E</button>
                     <input style="display: none;" type="file" (change)="setImageLocally($event, column, column.heroImage, columnIndex)" #uploadHeroImageInput>
                 </div>
                 <div class="row is-flex is-justify-content-space-evenly my-3" *ngFor="let row of column.content; let last = last; let rowIndex = index">
                     <div class="left image-container" (mouseenter)="mouseEnterImageRow(row)" (mouseleave)="mouseLeaveImageRow(row)">
-                        <img class="column-image" [src]="row.image">
+                        <img class="column-image" [src]="row.image | safeResourceUrl">
                         <button *ngIf="row.hasEditBtn" class="button is-info" (click)="uploadRowImageInput.click()">E</button>
                         <input style="display: none;" type="file" (change)="setImageLocally($event, row, row.image, columnIndex, rowIndex)" #uploadRowImageInput>
                     </div>

@@ -15,6 +15,7 @@ export class AuthService {
     appLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     authChange: Subject<boolean> = new Subject<boolean>();
     authError: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    authErrorMessage: Subject<string> = new Subject<string>();
     private isAuthenticated: boolean = false;
     constructor(private afAuth: AngularFireAuth, private router: Router, private afStore: AngularFirestore, private afStorage: AngularFireStorage) {
         this.router.events.subscribe(event => {
@@ -26,6 +27,17 @@ export class AuthService {
 
     isAuth() {
         return this.isAuthenticated;
+    }
+
+    emitAuthErrorMessage(error: any) {
+        console.log(JSON.stringify(error))
+        if (error.code === 'auth/user-not-found') {
+            this.authErrorMessage.next('This account doesn\'t seem to exist. Click on the link above to create an account. Or use the Google or Facebook sign in methods.');
+        } else if (error.code === 'auth/wrong-password') {
+            this.authErrorMessage.next('Invalid email address or password. Please try again.')
+        } else {
+            this.authErrorMessage.next('There was an unknown error that occured while trying to log you in. Please try again.');
+        }
     }
 
     registerUser(authData: AuthData) {
@@ -67,8 +79,8 @@ export class AuthService {
                 })
             })
             .catch(err => {
-                console.error(err);
                 this.appLoading.next(false);
+                this.emitAuthErrorMessage(err);
                 this.authError.next(true);
             })
     }
