@@ -14,6 +14,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     form: FormGroup;
     loading: boolean = false;
     authError: boolean = false;
+    authErrorMessage: string = '';
     subscriptions: Subscription[] = [];
     constructor(private authService: AuthService) {}
 
@@ -29,6 +30,10 @@ export class LoginComponent implements OnInit, OnDestroy {
         
         this.subscriptions.push(this.authService.authError.subscribe((authError: boolean) => {
             this.authError = authError;
+        }));
+
+        this.subscriptions.push(this.authService.authErrorMessage.subscribe((message: string) => {
+            this.authErrorMessage = message;
         }))
     }
 
