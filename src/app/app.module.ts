@@ -23,6 +23,9 @@ import { SubscriptionComponent } from './profile/subscription/subscription.compo
 import { TemplatesComponent } from './templates/templates.component';
 import { Template01Component } from './shared/all-templates/template01/template01.component';
 import { Template02Component } from './shared/all-templates/template02/template02.component';
+import { FooterComponent } from './shared/footer/footer.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { IconsModule } from './shared/icons/icons.module';
 import { SafeUrlPipe } from './shared/pipes/safe.pipe';
 
 @NgModule({
@@ -38,6 +41,7 @@ import { SafeUrlPipe } from './shared/pipes/safe.pipe';
     TemplatesComponent,
     Template01Component,
     Template02Component,
+    FooterComponent,
     SafeUrlPipe
   ],
   imports: [
@@ -51,7 +55,9 @@ import { SafeUrlPipe } from './shared/pipes/safe.pipe';
     FormsModule,
     ReactiveFormsModule,
     CommonModule,
-    HttpClientModule
+    HttpClientModule,
+    FontAwesomeModule,
+    IconsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
