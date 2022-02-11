@@ -30,7 +30,6 @@ export class AuthService {
     }
 
     emitAuthErrorMessage(error: any) {
-        console.log(JSON.stringify(error))
         if (error.code === 'auth/user-not-found') {
             this.authErrorMessage.next('This account doesn\'t seem to exist. Click on the link above to create an account. Or use the Google or Facebook sign in methods.');
         } else if (error.code === 'auth/wrong-password') {

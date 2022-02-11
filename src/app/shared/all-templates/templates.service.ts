@@ -5,8 +5,6 @@ import { AuthService } from "src/app/auth/auth.service";
 import { User } from "src/app/auth/user.model";
 import { v4 as uuid } from 'uuid';
 import { tap } from 'rxjs/operators';
-import { UploadTaskSnapshot } from "@angular/fire/compat/storage/interfaces";
-import { Template } from '../../auth/user.model';
 
 @Injectable({providedIn: 'root'})
 export class TemplatesService {
@@ -72,6 +70,9 @@ export class TemplatesService {
                 return null;
             }
         }
-        
+    }
+
+    deleteImages(url: string) {
+        return this.afStorage.refFromURL(url).delete().toPromise()
     }
 }

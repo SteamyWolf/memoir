@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
 import { Observable } from 'rxjs';
 import { TemplateCanDeactivate } from './deactivate-template01.guard';
+import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Component({
     selector: 'app-template01',
@@ -22,9 +23,10 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
     uuidCopy: string;
     saveDisabled: boolean = false;
     imagesToUpload: any[] = [];
+    imagesToDelete: any[] = [];
     @ViewChild('titleInput') titleInput: ElementRef;
 
-    constructor(private templatesSvc: TemplatesService, private authService: AuthService) { }
+    constructor(private templatesSvc: TemplatesService, private authService: AuthService, private afStorage: AngularFireStorage) { }
 
     @HostListener('window:beforeunload') canDeactivate(): Observable<boolean> | boolean {
         this.templatesSvc.currentTemplateUUID = '';
@@ -38,7 +40,6 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
         this.authService.currentUser.subscribe((user: User) => {
             if (user) {
                 this.user = user;
-                console.log(user);
                 this.updateDataFromUserChange();
             }  
         })
@@ -105,9 +106,13 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
 
     deleteColumn() {
         let deletedColumn = this.columns.pop();
+        console.log(deletedColumn)
         if (deletedColumn?.heroImage.includes('blob')) {
             let index = this.imagesToUpload.findIndex(localImage => localImage.temporaryUrl === deletedColumn?.heroImage);
             this.imagesToUpload.splice(index, 1);
+        }
+        if (deletedColumn?.heroImage.includes('firebasestorage')) {
+            this.imagesToDelete.push(deletedColumn.heroImage);
         }
         if (deletedColumn?.content && deletedColumn.content.length) {
             deletedColumn?.content?.forEach(row => {
@@ -115,16 +120,25 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
                     let index = this.imagesToUpload.findIndex(localImage => localImage.temporaryUrl === row.image);
                     this.imagesToUpload.splice(index, 1);
                 }
+                if (row.image.includes('firebasestorage')) {
+                    this.imagesToDelete.push(row.image);
+                }
             })
         }
+        console.log(this.imagesToDelete)
         // find a way to delete all of the images that the user has deleted if they exist on firebase. But only once the user hits save. Probably best in the nav component.
     }
 
     deleteRow(index: number) {
         let deletedRow = this.columns[index].content!.pop();
+        console.log(deletedRow)
         if (deletedRow?.image.includes('blob')) {
             this.imagesToUpload.findIndex(localImage => localImage.temporaryUrl === deletedRow?.image);
         }
+        if (deletedRow?.image.includes('firebasestorage')) {
+            this.imagesToDelete.push(deletedRow.image);
+        }
+        console.log(this.imagesToDelete)
     }
 
     mouseEnterImage(column: Column) {

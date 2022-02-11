@@ -22,12 +22,12 @@ export class TemplateDeactivateGuard implements CanDeactivate<TemplateCanDeactiv
                 console.log('has chosen true?')
                 let template = component.user.data!.chosenTemplates.find(template => template.uuid === component.uuidCopy);
                 let templateIndex = component.user.data!.chosenTemplates.findIndex(template => template.uuid === component.uuidCopy);
-                if (template) { // should always be true but typeScript is a weeenie.
-                    console.log(template.columns)
-                    console.log(component.columnsCopy)
+                if (template) { // should always be true but typeScript is a weenie.
                     template!.title = component.titleCopy;
                     template!.columns = component.columnsCopy;
                     component.user.data!.chosenTemplates[templateIndex] = template;
+                    component.imagesToUpload = [];
+                    component.imagesToDelete = [];
                     this.authSvc.currentUser.next(component.user);
                     this.templatesSvc.currentTemplateUUID = '';
                 }
