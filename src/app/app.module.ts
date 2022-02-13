@@ -27,6 +27,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconsModule } from './shared/icons/icons.module';
 import { SafeUrlPipe } from './shared/pipes/safe.pipe';
+import { ComponentsModule } from './shared/components/components.module';
 
 @NgModule({
   declarations: [
@@ -57,7 +58,8 @@ import { SafeUrlPipe } from './shared/pipes/safe.pipe';
     CommonModule,
     HttpClientModule,
     FontAwesomeModule,
-    IconsModule
+    IconsModule,
+    ComponentsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

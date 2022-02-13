@@ -5,11 +5,13 @@ import { AuthService } from "src/app/auth/auth.service";
 import { User } from "src/app/auth/user.model";
 import { v4 as uuid } from 'uuid';
 import { tap } from 'rxjs/operators';
+import { Subject } from "rxjs";
 
 @Injectable({providedIn: 'root'})
 export class TemplatesService {
     public currentTemplateUUID: string;
     user: User;
+    notificationMessage: Subject<string> = new Subject<string>();
     constructor(private afStore: AngularFirestore, private authSvc: AuthService, private afStorage: AngularFireStorage) {
         this.authSvc.currentUser.subscribe((user: User) => {
             this.user = user;
@@ -21,6 +23,7 @@ export class TemplatesService {
             .then(() => {
                 console.log('SUCCESS')
                 this.authSvc.currentUser.next(this.user);
+                this.notificationMessage.next('Successfully Updated')
             })
             .catch(err => {
                 console.error(err);

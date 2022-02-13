@@ -1,4 +1,5 @@
 <app-nav [uuid]="uuidCopy" [title]="title" [columns]="columns" [type]="'template01'" [saveDisabled]="saveDisabled" [(imagesToUpload)]="imagesToUpload" [(imagesToDelete)]="imagesToDelete"></app-nav>
+<app-notification class="notificationClass" *ngIf="showNotification" [type]="notificationType" [message]="notificationMessage" (close)="closeNotification($event)"></app-notification>
 <div class="container">
     <div class="title-container has-text-centered my-6">
         <h1 *ngIf="!canEditTitle" class="title" (click)="editTitle()">{{ title }}</h1>

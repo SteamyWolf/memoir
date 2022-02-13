@@ -1,0 +1,4 @@
+<div class="notification" #notification [@notification]="animationState ? 'start' : 'finish'">
+    <button class="delete" (click)="closeNotification()"></button>
+    {{ message }}
+</div>

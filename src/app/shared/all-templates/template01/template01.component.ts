@@ -6,7 +6,6 @@ import { AuthService } from 'src/app/auth/auth.service';
 import { User } from 'src/app/auth/user.model';
 import { Observable } from 'rxjs';
 import { TemplateCanDeactivate } from './deactivate-template01.guard';
-import { AngularFireStorage } from '@angular/fire/compat/storage';
 
 @Component({
     selector: 'app-template01',
@@ -24,9 +23,12 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
     saveDisabled: boolean = false;
     imagesToUpload: any[] = [];
     imagesToDelete: any[] = [];
+    showNotification: boolean = false;
+    notificationType: string = '';
+    notificationMessage: string = '';
     @ViewChild('titleInput') titleInput: ElementRef;
 
-    constructor(private templatesSvc: TemplatesService, private authService: AuthService, private afStorage: AngularFireStorage) { }
+    constructor(private templatesSvc: TemplatesService, private authService: AuthService) { }
 
     @HostListener('window:beforeunload') canDeactivate(): Observable<boolean> | boolean {
         this.templatesSvc.currentTemplateUUID = '';
@@ -44,10 +46,18 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
             }  
         })
         this.loadNewOrSavedTemplate();
+
+        this.templatesSvc.notificationMessage.subscribe((message: string) => {
+            this.showNotification = true;
+            if (message.toLowerCase().includes('success')) {
+                this.notificationMessage = message;
+                this.notificationType = 'is-success';
+            }
+        })
     }
 
     ngDoCheck(): void {
-        if (JSON.stringify(this.columns) !== JSON.stringify(this.columnsCopy)) {
+        if (JSON.stringify(this.columns) !== JSON.stringify(this.columnsCopy) || this.title !== this.titleCopy) {
             this.saveDisabled = false;
         } else {
             this.saveDisabled = true;
@@ -59,6 +69,8 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
         if (template) {
             this.columns = template!.columns;
             this.columnsCopy = JSON.parse(JSON.stringify(template!.columns));
+            this.title = template.title;
+            this.titleCopy = template.title;
         } else {
             this.columnsCopy = [];
         }
@@ -182,5 +194,11 @@ export class Template01Component implements OnInit, TemplateCanDeactivate, DoChe
 
         this.imagesToUpload.push(localImage);
         console.log(this.imagesToUpload);
+    }
+
+    closeNotification(bool: boolean) {
+        if (bool) {
+            this.showNotification = false;
+        }
     }
 }
